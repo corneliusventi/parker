@@ -6,7 +6,7 @@
         <div class="col-sm-2 bg-primary p-1">
             @include('layouts.sidebar')
         </div>
-        <div class="col-sm-2 p-5">
+        <div class="col-sm-10 p-5">
             @yield('content')
         </div>
     </div>
@@ -15,7 +15,7 @@
 
 @push('css')
     <style>
-        html, body, .container-fluid, .row {
+        html, body, .container-fluid, .row{
             height: 100vh;
         }
     </style>
