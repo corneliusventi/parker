@@ -32,9 +32,8 @@ Route::group(['middleware' => ['auth']], function () {
         return view('pages.topup');
     })->name('topup');
 
-    Route::get('/profile', function () {
-        return view('pages.profile');
-    })->name('profile');
+    Route::get('/profile', 'ProfileController@index')->name('profile');
+    Route::put('/profile', 'ProfileController@update')->name('profile.update');
 
     // Route::get('/about', function () {
     //     return view('pages.about');

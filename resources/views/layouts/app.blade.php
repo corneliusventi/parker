@@ -6,7 +6,7 @@
         <div class="col-sm-2 bg-primary p-1">
             @include('layouts.sidebar')
         </div>
-        <div class="col-sm-10 p-4">
+        <div class="col-sm-10 p-5">
             <div class="card">
                 <div class="card-header bg-primary text-white"> @yield('title') </div>
 
@@ -14,6 +14,15 @@
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
+                        </div>
+                    @endif
+                    @if ($errors->any())
+                        <div class="alert alert-danger" role="alert">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     @endif
 
