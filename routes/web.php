@@ -11,38 +11,34 @@
 |
  */
 
-Route::get('/', function () {
-    return view('pages.welcome');
+Route::group(['middleware' => ['guest']], function () {
+
+    Route::get('/', function () {
+        return view('pages.welcome');
+    });
+
 });
 
-Route::get('/login', function () {
-    return view('pages.login');
-})->name('login');
+Auth::routes();
 
-Route::get('/register', function () {
-    return view('pages.register');
-})->name('register');
+Route::group(['middleware' => ['auth']], function () {
 
-Route::get('/forgot-password', function () {
-    return view('pages.forgot-password');
-})->name('forgot-password');
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/booking', function () {
+        return view('pages.booking');
+    })->name('booking');
 
-Route::get('/dashboard', function () {
-    return view('pages.dashboard');
-})->name('dashboard');
+    Route::get('/topup', function () {
+        return view('pages.topup');
+    })->name('topup');
 
-Route::get('/booking', function () {
-    return view('pages.booking');
-})->name('booking');
+    Route::get('/profile', function () {
+        return view('pages.profile');
+    })->name('profile');
 
-Route::get('/topup', function () {
-    return view('pages.topup');
-})->name('topup');
+    // Route::get('/about', function () {
+    //     return view('pages.about');
+    // })->name('about');
 
-Route::get('/profile', function () {
-    return view('pages.profile');
-})->name('profile');
+});
 
-Route::get('/about', function () {
-    return view('pages.about');
-})->name('about');

@@ -1,6 +1,6 @@
 @extends('layouts.html')
 
-@section('title', 'Login')
+@section('title', 'Register')
 
 @section('body')
 <div class="container-fluid">
@@ -10,23 +10,30 @@
         </div>
         <div class="col-md-6 d-flex flex-column p-4 justify-content-center align-items-center">
             <div class="w-50">
-                <h1 class="display-4 text-primary text-center pb-4">Login</h1>
+                <h1 class="display-4 text-primary text-center pb-4">Register</h1>
 
-                <form action="#" method="POST">
+                <form action="{{ route('register') }}" method="POST">
+                    @csrf
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="fullname" id="fullname" placeholder="Fullname">
+                    </div>
                     <div class="form-group">
                         <input type="text" class="form-control" name="username" id="username" placeholder="Username">
                     </div>
                     <div class="form-group">
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
                         <input type="password" class="form-control" name="password" id="password" placeholder="Password">
                     </div>
-                    <button type="submit" name="login" id="login" class="btn btn-primary btn-block rounded">Login</button>
-                    <div class="mb-4 mt-4 text-center">
-                        <a href="{{ route('forgot-password') }}">Forgot your password?</a>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" placeholder="Password Confirmation">
                     </div>
+                    <button type="submit" name="login" id="login" class="btn btn-primary btn-block rounded">Register</button>
                 </form>
 
                 <div class="mb-4 mt-4 text-center">
-                    Not registered? <a href="{{ route('register') }}">Register</a>
+                    Already registered? <a href="{{ route('login') }}">Login</a>
                 </div>
             </div>
         </div>
@@ -39,6 +46,7 @@
         body, html, .container-fluid, .d-flex {
             height: 100%;
         }
+
         .background {
             position: relative;
         }

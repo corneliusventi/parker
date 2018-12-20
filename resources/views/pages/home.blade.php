@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Home')
 
 @section('content')
-    <h1>Dashboard</h1>
+    You are logged in!
 @endsection

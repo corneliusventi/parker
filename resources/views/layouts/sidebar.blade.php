@@ -6,12 +6,15 @@
 
 <div class="w-100 text-center text-white">
     <h2 class="p-1 pb-4">Cornelius Venti</h2>
-    <a href="{{ route('dashboard') }}" class="btn btn-primary btn-big btn-block">Dashboard</a>
+    <a href="{{ route('home') }}" class="btn btn-primary btn-big btn-block">Home</a>
     <a href="{{ route('booking') }}" class="btn btn-primary btn-big btn-block">Booking</a>
     <a href="{{ route('topup') }}" class="btn btn-primary btn-big btn-block">Top Up</a>
     <a href="{{ route('profile') }}" class="btn btn-primary btn-big btn-block">Profile</a>
-    <a href="{{ route('about') }}" class="btn btn-primary btn-big btn-block">About</a>
-    <a href="{{ route('login') }}" class="btn btn-primary btn-big btn-block">Logout</a>
+    {{-- <a href="{{ route('about') }}" class="btn btn-primary btn-big btn-block">About</a> --}}
+    <form action="{{ route('logout') }}" method="post" class="mt-2">
+        @csrf
+        <button type="submit" class="btn btn-primary btn-big btn-block">Logout</button>
+    </form>
 </div>
 
 @push('css')
