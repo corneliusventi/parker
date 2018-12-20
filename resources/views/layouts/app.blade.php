@@ -8,7 +8,7 @@
         </div>
         <div class="col-sm-10 p-5">
             <div class="card">
-                <div class="card-header bg-primary text-white"> @yield('title') </div>
+                <div class="card-header bg-primary text-white font-weight-bold"> @yield('title') </div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -32,6 +32,9 @@
         </div>
     </div>
 </div>
+
+@yield('modal')
+
 @endsection
 
 @push('css')

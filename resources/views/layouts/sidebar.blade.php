@@ -5,7 +5,8 @@
 </div>
 
 <div class="w-100 text-center text-white">
-    <h2 class="p-1 pb-4">Cornelius Venti</h2>
+    <h2 class="pt-1">Cornelius Venti</h2>
+    <h4 class="pb-2">Rp. {{ number_format(auth()->user()->wallet) }}</h4>
     <a href="{{ route('home') }}" class="btn btn-primary btn-big btn-block">Home</a>
     <a href="{{ route('booking') }}" class="btn btn-primary btn-big btn-block">Booking</a>
     <a href="{{ route('topup') }}" class="btn btn-primary btn-big btn-block">Top Up</a>
