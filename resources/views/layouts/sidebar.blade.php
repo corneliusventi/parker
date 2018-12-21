@@ -15,6 +15,9 @@
         <div class="col col-md-12 order-4 order-md-5">
             <a href="{{ route('booking.index') }}" class="btn btn-primary btn-big btn-block">Booking</a>
         </div>
+        <div class="col col-md-12 order-4 order-md-5">
+            <a href="{{ route('parking.index') }}" class="btn btn-primary btn-big btn-block">Parking</a>
+        </div>
         <div class="col col-md-12 order-5 order-md-6">
             <a href="{{ route('topup') }}" class="btn btn-primary btn-big btn-block">Top Up</a>
         </div>

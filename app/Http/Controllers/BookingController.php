@@ -6,6 +6,7 @@ use App\Booking;
 use Illuminate\Http\Request;
 use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
 use App\ParkingLot;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -26,8 +27,7 @@ class BookingController extends Controller
         foreach ($parkingLots as $parkingLot) {
             $marker = array();
             $marker['position'] = $parkingLot->latitude . ',' . $parkingLot->longitude;
-
-            if ($parkingLot->parkings()->where('status', true)->first() && $parkingLot->parkings()->where('status', true)->first()->time_end->diffInMinutes(now()) <= 60) {
+            if ($parkingLot->parkings()->where('status', true)->first() && Carbon::createFromTimeString($parkingLot->parkings()->where('status', true)->first()->time_end)->diffInMinutes(Carbon::now()) <= 60) {
                 $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=ffed4a&color=FFF&hoffset=-1';
                 $marker['infowindow_content'] = "<div class='text-center'><h5>$parkingLot->name</h5><h6 class='pb-4'>$parkingLot->address</h6><p>Available in One Hour</p><button class='btn btn-primary btn-disabled btn-block' data-toggle='modal' data-target='#bookLaterModal' data-name='$parkingLot->name' data-address='$parkingLot->address' data-id='$parkingLot->id'>Book Later</button></div>";
             } else if ($parkingLot->bookings()->where('status', true)->first() || $parkingLot->parkings()->where('status', true)->first()) {
@@ -70,6 +70,14 @@ class BookingController extends Controller
             'date' => $request->date ?? today(),
             'user_id' => auth()->id(),
         ]);
+
+        $bookingPrice = 5000;
+        $parkingPrice = 1000;
+
+        auth()->user()->update([
+            'wallet' => auth()->user()->wallet - ($bookingPrice + ($parkingPrice * $request->hour))
+        ]);
+
         return redirect()->route('booking.index')->withStatus('Booking Successful');
     }
 
@@ -115,6 +123,25 @@ class BookingController extends Controller
      */
     public function destroy(Booking $booking)
     {
-        //
+        $bookingPrice = 5000;
+        $parkingPrice = 1000;
+
+        $user = auth()->user();
+        if ($booking->type == 'later') {
+            if (now()->lte(Carbon::createFromTimeString($booking->time)->subMinute(30))) {
+                $user->update([
+                    'wallet' => $user->wallet + ($parkingPrice * $booking->hour)
+                ]);
+            }
+        } else if ($booking->type == 'now') {
+            if (Carbon::createFromTimeString($booking->time)->lte(now()->addMinute(30))) {
+                $user->update([
+                    'wallet' => $user->wallet + ($parkingPrice * $booking->hour)
+                ]);
+            }
+        }
+
+        $booking->delete();
+        return redirect()->route('parking.index')->withStatus('Delete Booking Successful');
     }
 }

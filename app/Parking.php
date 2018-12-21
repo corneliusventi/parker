@@ -9,5 +9,6 @@ class Parking extends Model
 {
     use SoftDeletes;
 
-    protected $dates = ['date', 'time_start', 'time_end'];
+    protected $dates = ['date'];
+    protected $fillable = ['date', 'time_end', 'time_start', 'user_id', 'status'];
 }

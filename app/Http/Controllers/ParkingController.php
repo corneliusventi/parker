@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Parking;
 use Illuminate\Http\Request;
+use App\Booking;
+use App\ParkingLot;
 
 class ParkingController extends Controller
 {
@@ -14,7 +16,10 @@ class ParkingController extends Controller
      */
     public function index()
     {
-        //
+        $bookings = auth()->user()->bookings->filter(function ($booking) {
+            return $booking->status == true;
+        });
+        return view('pages.parking', compact('bookings'));
     }
 
     /**
@@ -35,7 +40,19 @@ class ParkingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $booking = Booking::findOrFail($request->booking_id);
+        $parking_lot = ParkingLot::findOrFail($request->parking_lot_id);
+
+        $booking->status = false;
+        $booking->save();
+        $parking_lot->parkings()->create([
+            'date' => today(),
+            'time_start' => now(),
+            'time_end' => now()->addHour($booking->hour),
+            'user_id' => auth()->id(),
+        ]);
+
+        return redirect()->route('parking.index')->withStatus('Parking Successful');
     }
 
     /**

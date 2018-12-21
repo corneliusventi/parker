@@ -25,7 +25,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/home', 'HomeController@index')->name('home');
 
-    Route::resource('booking', 'BookingController');
+    Route::resource('booking', 'BookingController')->only(['index', 'store', 'destroy']);
+    Route::resource('parking', 'ParkingController')->only(['index', 'store']);
 
     Route::get('/topup', 'TopUpController@index')->name('topup');
     Route::put('/topup', 'TopUpController@update')->name('topup.update');
