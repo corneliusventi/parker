@@ -5,11 +5,11 @@
 @section('body')
 <div class="container-fluid">
     <div class="d-flex flex-row">
-        <div class="background col-md-6 d-flex p-4 justify-content-center align-items-center">
+        <div class="background col-md-6 d-md-flex p-4 justify-content-center align-items-center d-none">
             <img src="/image/logo.png" class="img-fluid" alt="logo parker" width="500">
         </div>
         <div class="col-md-6 d-flex flex-column p-4 justify-content-center align-items-center">
-            <div class="w-50">
+            <div class="w-75">
                 <h1 class="display-4 text-primary text-center pb-4">Login</h1>
 
                 <form action="{{ route('login') }}" method="POST">

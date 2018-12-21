@@ -3,10 +3,10 @@
 @section('body')
 <div class="container-fluid my-container">
     <div class="row my-row">
-        <div class="col-sm-2 bg-primary p-1">
+        <div class="col-12 col-md-3 col-lg-2 bg-primary p-1">
             @include('layouts.sidebar')
         </div>
-        <div class="col-sm-10 p-5">
+        <div class="col-12 col-md-9 col-lg-10 p-4">
             <div class="card">
                 <div class="card-header bg-primary text-white font-weight-bold"> @yield('title') </div>
 
@@ -39,8 +39,10 @@
 
 @push('css')
     <style>
-        html, body, .my-container .my-row{
-            height: 100vh;
+        @media (min-width: 768px) {
+            html, body, .my-container .my-row{
+                height: 100vh;
+            }
         }
     </style>
 @endpush

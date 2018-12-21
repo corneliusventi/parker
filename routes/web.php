@@ -24,9 +24,8 @@ Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::get('/booking', function () {
-        return view('pages.booking');
-    })->name('booking');
+
+    Route::resource('booking', 'BookingController');
 
     Route::get('/topup', 'TopUpController@index')->name('topup');
     Route::put('/topup', 'TopUpController@update')->name('topup.update');

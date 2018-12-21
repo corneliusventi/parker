@@ -3,12 +3,24 @@
 @section('title', 'Top Up Wallet')
 
 @section('content')
-    <div class="d-flex flex-row w-100 justify-content-around">
-        <button class="btn btn-lg btn-warning" data-toggle="modal" data-target="#topupModal" data-topup="10000">10,000</button>
-        <button class="btn btn-lg btn-warning" data-toggle="modal" data-target="#topupModal" data-topup="20000">20,000</button>
-        <button class="btn btn-lg btn-warning" data-toggle="modal" data-target="#topupModal" data-topup="30000">30,000</button>
-        <button class="btn btn-lg btn-warning" data-toggle="modal" data-target="#topupModal" data-topup="40000">40,000</button>
-        <button class="btn btn-lg btn-warning" data-toggle="modal" data-target="#topupModal" data-topup="50000">50,000</button>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-6 p-1">
+                <button class="btn btn-lg btn-block btn-warning p-1" data-toggle="modal" data-target="#topupModal" data-topup="10000">10,000</button>
+            </div>
+            <div class="col-xs-12 col-md-6 p-1">
+                <button class="btn btn-lg btn-block btn-warning p-1" data-toggle="modal" data-target="#topupModal" data-topup="20000">20,000</button>
+            </div>
+            <div class="col-xs-12 col-md-6 p-1">
+                <button class="btn btn-lg btn-block btn-warning p-1" data-toggle="modal" data-target="#topupModal" data-topup="30000">30,000</button>
+            </div>
+            <div class="col-xs-12 col-md-6 p-1">
+                <button class="btn btn-lg btn-block btn-warning p-1" data-toggle="modal" data-target="#topupModal" data-topup="40000">40,000</button>
+            </div>
+            <div class="col-xs-12 col-md-6 p-1">
+                <button class="btn btn-lg btn-block btn-warning p-1" data-toggle="modal" data-target="#topupModal" data-topup="50000">50,000</button>
+            </div>
+        </div>
     </div>
 @endsection
 
