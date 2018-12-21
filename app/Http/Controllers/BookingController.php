@@ -62,23 +62,28 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        $parkingLot = ParkingLot::find($request->parking_lot_id);
-        $parkingLot->bookings()->create([
-            'type' => $request->type,
-            'hour' => (int)$request->hour,
-            'time' => $request->time ?? now(),
-            'date' => $request->date ?? today(),
-            'user_id' => auth()->id(),
-        ]);
+        if (auth()->user()->wallet >= 10000) {
+            $parkingLot = ParkingLot::find($request->parking_lot_id);
+            $parkingLot->bookings()->create([
+                'type' => $request->type,
+                'hour' => (int)$request->hour,
+                'time' => $request->time ?? now(),
+                'date' => $request->date ?? today(),
+                'user_id' => auth()->id(),
+            ]);
 
-        $bookingPrice = 5000;
-        $parkingPrice = 1000;
+            $bookingPrice = 5000;
+            $parkingPrice = 1000;
 
-        auth()->user()->update([
-            'wallet' => auth()->user()->wallet - ($bookingPrice + ($parkingPrice * $request->hour))
-        ]);
+            auth()->user()->update([
+                'wallet' => auth()->user()->wallet - ($bookingPrice + ($parkingPrice * $request->hour))
+            ]);
+            return redirect()->route('booking.index')->withStatus('Booking Successful');
+        } else {
+            return redirect()->route('booking.index')->withStatus('Minimum Saldo Rp. 10.000');
+        }
 
-        return redirect()->route('booking.index')->withStatus('Booking Successful');
+
     }
 
     /**
