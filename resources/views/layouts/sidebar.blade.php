@@ -7,7 +7,7 @@
             <h2 class="pt-1">Cornelius Venti</h2>
         </div>
         <div class="col-12 col-md-12 order-8 order-md-3">
-            <h4 class="pb-2">Rp. {{ number_format(auth()->user()->wallet) }}</h4>
+            <h4>Rp. {{ number_format(auth()->user()->wallet) }}</h4>
         </div>
         <div class="col col-md-12 order-3 order-md-4">
             <a href="{{ route('home') }}" class="btn btn-primary btn-big btn-block">Home</a>

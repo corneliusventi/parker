@@ -46,8 +46,8 @@
 @push('css')
     <style>
         @media (min-width: 768px) {
-            html, body, .my-container .my-row{
-                height: 100vh;
+            html, body, .my-container, .my-row{
+                height: 100%;
             }
         }
     </style>
