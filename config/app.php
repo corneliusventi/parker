@@ -166,6 +166,7 @@ return [
          * Package Service Providers...
          */
         FarhanWazir\GoogleMaps\GMapsServiceProvider::class,
+        Creativeorange\Gravatar\GravatarServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -206,6 +207,7 @@ return [
         'File' => Illuminate\Support\Facades\File::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'GMaps' => FarhanWazir\GoogleMaps\Facades\GMapsFacade::class,
+        'Gravatar' => Creativeorange\Gravatar\Facades\Gravatar::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
         'Lang' => Illuminate\Support\Facades\Lang::class,
         'Log' => Illuminate\Support\Facades\Log::class,

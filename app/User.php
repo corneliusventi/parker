@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Gravatar;
 
 class User extends Authenticatable
 {
@@ -35,5 +36,9 @@ class User extends Authenticatable
     public function parkings()
     {
         return $this->hasMany('App\Parking');
+    }
+    public function getGravatarAttribute()
+    {
+        return Gravatar::get($this->email, ['size' => 200]);
     }
 }

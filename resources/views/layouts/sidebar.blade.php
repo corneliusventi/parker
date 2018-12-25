@@ -1,7 +1,7 @@
 <div class="container-fluid text-center text-white">
     <div class="row justify-content-center">
         <div class="col-md-12 d-none d-md-block order-1 order-md-1 p-4">
-            <img class="img-fluid rounded-circle" src="/image/profile.jpg" alt="">
+            <img class="img-fluid rounded-circle" src="{{ auth()->user()->gravatar }}" alt="">
         </div>
         <div class="col-md-12 d-none d-md-block order-2 order-md-2">
             <h2 class="pt-1">Cornelius Venti</h2>
