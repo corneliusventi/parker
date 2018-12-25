@@ -8,14 +8,21 @@
         @foreach ($bookings as $booking)
             <li class="list-group-item">
                 <div class="row">
-                    <div class="col d-flex align-items-center">
+                    <div class="col-12 col-md d-flex align-items-center">
                         <span>
                             {{ $booking->parkingLot->name }}
                             -
                             {{ $booking->parkingLot->address }}
+                            -
+                            Booking {{ $booking->type }}
+                            -
+                            Time: {{ $booking->time }}
+                            -
+                            {{ $booking->hour }} Hour
+
                         </span>
                     </div>
-                    <div class="col-auto">
+                    <div class="col-12 col-md-auto">
                         <form class="inline-form" action="{{ route('booking.destroy', $booking->id) }}" method="POST">
                                 @csrf
                                 @method('Delete')
