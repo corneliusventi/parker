@@ -20,6 +20,7 @@ class BookingController extends Controller
         $config = array();
         $config['center'] = '-0.03109, 109.32199'; //Pontianak
         $config['zoom'] = 15;
+        $config['geometry'] = true;
         $config['onclick'] = 'mapOnClick(event)';
         GMaps::initialize($config);
 
@@ -27,6 +28,7 @@ class BookingController extends Controller
         foreach ($parkingLots as $parkingLot) {
             $marker = array();
             $marker['position'] = $parkingLot->latitude . ',' . $parkingLot->longitude;
+            $marker['visible'] = false;
             if ($parkingLot->parkings()->where('status', true)->first() && Carbon::createFromTimeString($parkingLot->parkings()->where('status', true)->first()->time_end)->diffInMinutes(Carbon::now()) <= 60) {
                 $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=ffed4a&color=FFF&hoffset=-1';
                 $marker['infowindow_content'] = "<div class='text-center'><h5>$parkingLot->name</h5><h6 class='pb-4'>$parkingLot->address</h6><p>Available in One Hour</p><button class='btn btn-primary btn-disabled btn-block' data-toggle='modal' data-target='#bookLaterModal' data-name='$parkingLot->name' data-address='$parkingLot->address' data-id='$parkingLot->id'>Book Later</button></div>";
@@ -40,7 +42,7 @@ class BookingController extends Controller
             Gmaps::add_marker($marker);
         }
         $map = GMaps::create_map();
-
+        $map['js'] = str_replace_first('&v=3', '&v=3&libraries=geometry', $map['js']);
         return view('pages.booking', compact('map'));
     }
 

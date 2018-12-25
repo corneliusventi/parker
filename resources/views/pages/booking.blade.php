@@ -128,19 +128,35 @@
         $('#bookingPrice').text(bookingPrice);
         $('#parkingPrice').text(parkingPrice);
 
-        function placeMarker(location) {
+        function showParkingLotInRadius(radius) {
+
+            markers_map.forEach(marker => {
+                if (google.maps.geometry.spherical.computeDistanceBetween(marker.position, destinationMarker.position) <= radius) {
+                    marker.setVisible(true);
+                } else {
+                    marker.setVisible(false);
+                }
+            })
+        }
+
+        function placeMarker(location, radius) {
             map.setCenter(location);
             map.setZoom(defaultZoomIn);
             if (destinationMarker) {
                 destinationMarker.setPosition(location)
+                google.maps.event.clearListeners(destinationMarker, 'dragend');
             } else {
                 destinationMarker = new google.maps.Marker({
                     map: map,
-                    icon: 'https://cdn.mapmarker.io/api/v1/pin?text=D&size=40&background=3490dc&color=FFF&hoffset=-1',
+                    icon: 'https://cdn.mapmarker.io/api/v1/pin?text=D&size=40&background=38c172&color=FFF&hoffset=-1',
                     draggable: true,
                     position: location
                 });
             }
+
+            google.maps.event.addListener(destinationMarker, 'dragend', function (event) {
+                placeDestination(event.latLng, radius);
+            });
             if (radiusCircle) destinationMarker.bindTo("position", radiusCircle, "center");
         }
 
@@ -156,17 +172,21 @@
                     fillColor: '#3490dc',
                     fillOpacity: 0.35,
                     map: map,
-                    draggable: true,
+                    // draggable: true,
                     center: center,
                     radius: radius
                 });
+                // google.maps.event.addListener(radiusCircle, 'dragend', function (event) {
+                //     placeDestination(event.latLng, radius);
+                // });
             }
             if (destinationMarker) destinationMarker.bindTo("position", radiusCircle, "center");
         }
 
         function placeDestination(location, radius) {
-            placeMarker(location);
+            placeMarker(location, radius);
             placeCircle(location, radius);
+            showParkingLotInRadius(radius);
         }
 
         function mapOnClick(event) {
@@ -190,6 +210,8 @@
                     if (status === google.maps.GeocoderStatus.OK) {
                         let location = results[0].geometry.location;
                         placeDestination(location, radius);
+                        showParkingLotInRadius(radius);
+
                     } else {
                         alert('Geocode was not successful for the following reason: ' + status);
                     }
