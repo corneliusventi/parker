@@ -6,9 +6,20 @@
         <div class="col-12 col-md-3 col-lg-2 bg-primary p-1">
             @include('layouts.sidebar')
         </div>
-        <div class="col-12 col-md-9 col-lg-10 p-4">
+        <div class="content col-12 col-md-9 col-lg-10 p-4">
             <div class="card">
-                <div class="card-header bg-primary text-white font-weight-bold"> @yield('title') </div>
+                <div class="card-header bg-primary text-white font-weight-bold">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                @yield('title')
+                            </div>
+                            <div class="col-auto">
+                                @yield('buttons')
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 @hasSection ('content')
                     <div class="card-body">
@@ -48,6 +59,9 @@
         @media (min-width: 768px) {
             html, body, .my-container, .my-row{
                 height: 100%;
+            }
+            .content {
+                overflow-y: auto;
             }
         }
     </style>

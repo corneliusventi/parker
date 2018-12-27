@@ -98,7 +98,7 @@
                 let parking = parkingLotId;
                 let booking = bookingId;
 
-                if(booking == content) {
+                if(parking == content) {
                     scanner.stop();
                     modal.modal('hide');
                     $.redirect("{{ route('parking.store') }}", {

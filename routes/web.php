@@ -34,6 +34,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/profile', 'ProfileController@index')->name('profile');
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
 
+    Route::resource('user', 'UserController')->only(['index']);
+    Route::resource('parking-lot', 'ParkingLotController')->except(['show']);
+    Route::get('parking-lot/{parking_lot}/print', 'ParkingLotController@print')->name('parking-lot.print');
     // Route::get('/about', function () {
     //     return view('pages.about');
     // })->name('about');
