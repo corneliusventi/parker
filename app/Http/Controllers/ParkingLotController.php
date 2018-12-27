@@ -6,6 +6,7 @@ use App\ParkingLot;
 use Illuminate\Http\Request;
 use Freshbitsweb\Laratables\Laratables;
 use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
+use PDF;
 
 class ParkingLotController extends Controller
 {
@@ -161,6 +162,9 @@ class ParkingLotController extends Controller
 
     public function print(ParkingLot $parkingLot)
     {
-        return $parkingLot;
+        $this->authorize('print', $parkingLot);
+
+        $pdf = PDF::loadView('pages.parking-lot.pdf', compact('parkingLot'));
+        return $pdf->download('parking-lot.pdf');
     }
 }
