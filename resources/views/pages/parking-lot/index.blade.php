@@ -2,7 +2,7 @@
 
 @section('title', 'Parking Lots')
 @section('buttons')
-    <a href="{{ route('parking-lot.create') }}" class="btn btn-light text-primary btn-sm">Create</a>
+    <a href="{{ route('parking-lot.create') }}" class="btn btn-primary">Create</a>
 @endsection
 
 @section('content')

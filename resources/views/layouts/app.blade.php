@@ -7,45 +7,38 @@
             @include('layouts.sidebar')
         </div>
         <div class="content col-12 col-md-9 col-lg-10 p-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white font-weight-bold">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col">
-                                @yield('title')
-                            </div>
-                            <div class="col-auto">
-                                @yield('buttons')
-                            </div>
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col">
+                    <h1 class="h1 text-primary">
+                        @yield('title')
+                    </h1>
                 </div>
-
-                @hasSection ('content')
-                    <div class="card-body">
-                        @if (session('status'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('status') }}
-                            </div>
-                        @endif
-                        @if ($errors->any())
-                            <div class="alert alert-danger" role="alert">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        @yield('content')
-                    </div>
-                @else
-                    <ul class="list-group list-group-flush">
-                        @yield('list')
-                    </ul>
-                @endif
+                <div class="col-auto">
+                    @yield('buttons')
+                </div>
             </div>
+            @hasSection ('content')
+                @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @yield('content')
+            @else
+                <ul class="list-group list-group-flush">
+                    @yield('list')
+                </ul>
+            @endif
         </div>
     </div>
 </div>

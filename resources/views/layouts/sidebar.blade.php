@@ -19,40 +19,40 @@
                 <h6 class="mb-4">Rp. {{ number_format(auth()->user()->wallet) }}</h6>
             @endif
         </div>
-        <div class="col col-md-12 order-4 order-md-5">
+        <div class="col-4 col-md-12 order-4 order-md-5">
             <a href="{{ route('home') }}" class="btn btn-primary btn-big btn-block">Home</a>
         </div>
         @can('manage', \App\User::class)
-            <div class="col col-md-12 order-5 order-md-6">
+            <div class="col-4 col-md-12 order-5 order-md-6">
                 <a href="{{ route('user.index') }}" class="btn btn-primary btn-big btn-block">Users</a>
             </div>
         @endcan
         @can('manage', \App\ParkingLot::class)
-            <div class="col col-md-12 order-6 order-md-7">
+            <div class="col-4 col-md-12 order-6 order-md-7">
                 <a href="{{ route('parking-lot.index') }}" class="btn btn-primary btn-big btn-block">Parking Lots</a>
             </div>
         @endcan
         @can('booking')
-            <div class="col col-md-12 order-7 order-md-8">
+            <div class="col-4 col-md-12 order-7 order-md-8">
                 <a href="{{ route('booking.index') }}" class="btn btn-primary btn-big btn-block">Booking</a>
             </div>
         @endcan
         @can('parking')
-            <div class="col col-md-12 order-8 order-md-9">
+            <div class="col-4 col-md-12 order-8 order-md-9">
                 <a href="{{ route('parking.index') }}" class="btn btn-primary btn-big btn-block">Parking</a>
             </div>
         @endcan
         @can('topup')
-            <div class="col col-md-12 order-9 order-md-10">
+            <div class="col-4 col-md-12 order-9 order-md-10">
                 <a href="{{ route('topup') }}" class="btn btn-primary btn-big btn-block">Top Up</a>
             </div>
         @endcan
         @can('change-profile')
-            <div class="col col-md-12 order-10 order-md-11">
+            <div class="col-4 col-md-12 order-10 order-md-11">
                 <a href="{{ route('profile') }}" class="btn btn-primary btn-big btn-block">Profile</a>
             </div>
         @endcan
-        <div class="col col-md-12 order-11 order-md-112">
+        <div class="col-4 col-md-12 order-11 order-md-112">
             <form action="{{ route('logout') }}" method="post">
                 @csrf
                 <button type="submit" class="btn btn-primary btn-big btn-block">Logout</button>
