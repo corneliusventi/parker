@@ -6,8 +6,8 @@
             </h1>
             <h5 class="text-white-50">Parkir Keren</h5>
         </div>
-        <div class="col-md-12 d-none d-md-block order-2 order-md-2 p-4">
-            <img class="img-fluid rounded-circle" src="{{ auth()->user()->gravatar }}" alt="">
+        <div class="col-md-12 d-none d-md-flex justify-content-center order-2 order-md-2 p-4">
+            <div class="rounded-circle" style="width: 150px; height: 150px; background-image: url('{{ auth()->user()->avatar }}'); background-size: cover; background-position: center center;"></div>
         </div>
         <div class="col-md-12 d-none d-md-block order-3 order-md-3">
             <h4 class="pt-1">{{ auth()->user()->fullname }}</h4>
@@ -20,42 +20,42 @@
             @endif
         </div>
         <div class="col-4 col-md-12 order-4 order-md-5">
-            <a href="{{ route('home') }}" class="btn btn-primary btn-big btn-block">Home</a>
+            <a href="{{ route('home') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="home"></i> Home</a>
         </div>
         @can('manage', \App\User::class)
             <div class="col-4 col-md-12 order-5 order-md-6">
-                <a href="{{ route('user.index') }}" class="btn btn-primary btn-big btn-block">Users</a>
+                <a href="{{ route('user.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="users"></i> Users</a>
             </div>
         @endcan
         @can('manage', \App\ParkingLot::class)
             <div class="col-4 col-md-12 order-6 order-md-7">
-                <a href="{{ route('parking-lot.index') }}" class="btn btn-primary btn-big btn-block">Parking Lots</a>
+                <a href="{{ route('parking-lot.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="flag"></i>Parking Lots</a>
             </div>
         @endcan
         @can('booking')
             <div class="col-4 col-md-12 order-7 order-md-8">
-                <a href="{{ route('booking.index') }}" class="btn btn-primary btn-big btn-block">Booking</a>
+                <a href="{{ route('booking.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="book-open"></i> Booking</a>
             </div>
         @endcan
         @can('parking')
             <div class="col-4 col-md-12 order-8 order-md-9">
-                <a href="{{ route('parking.index') }}" class="btn btn-primary btn-big btn-block">Parking</a>
+                <a href="{{ route('parking.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="map-pin"></i> Parking</a>
             </div>
         @endcan
         @can('topup')
             <div class="col-4 col-md-12 order-9 order-md-10">
-                <a href="{{ route('topup') }}" class="btn btn-primary btn-big btn-block">Top Up</a>
+                <a href="{{ route('topup') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="dollar-sign"></i> Top Up</a>
             </div>
         @endcan
         @can('change-profile')
             <div class="col-4 col-md-12 order-10 order-md-11">
-                <a href="{{ route('profile') }}" class="btn btn-primary btn-big btn-block">Profile</a>
+                <a href="{{ route('profile') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="user"></i> Profile</a>
             </div>
         @endcan
         <div class="col-4 col-md-12 order-11 order-md-112">
             <form action="{{ route('logout') }}" method="post">
                 @csrf
-                <button type="submit" class="btn btn-primary btn-big btn-block">Logout</button>
+                <button type="submit" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="log-out"></i> Logout</button>
             </form>
         </div>
     </div>
@@ -78,4 +78,15 @@
             width: auto;
         }
     </style>
+@endpush
+
+@push('js')
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+        feather.replace({
+            class: 'd-none d-md-inline align-middle mr-1',
+            width: '22',
+            height: '22', 
+        })
+    </script>
 @endpush

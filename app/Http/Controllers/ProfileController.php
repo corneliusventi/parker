@@ -103,4 +103,21 @@ class ProfileController extends Controller
     {
         //
     }
+    
+    public function updatePhoto(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'photo' => ['required', 'image'],
+        ]);
+        
+        $photo = base64_encode(file_get_contents($request->photo));
+
+        $user->update([
+            'photo' => $photo,
+        ]);
+
+        return redirect()->route('profile')->withStatus('Photo Profile has been updated');
+    }
 }

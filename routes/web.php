@@ -33,6 +33,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/profile', 'ProfileController@index')->name('profile');
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
+    Route::put('/profile/photo', 'ProfileController@updatePhoto')->name('profile.update.photo');
 
     Route::resource('user', 'UserController')->only(['index']);
     Route::resource('parking-lot', 'ParkingLotController')->except(['show']);

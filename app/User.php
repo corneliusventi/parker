@@ -6,7 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Gravatar;
+use Avatar;
 
 class User extends Authenticatable
 {
@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'fullname', 'username', 'email', 'password', 'wallet',
+        'fullname', 'username', 'email', 'password', 'wallet', 'photo',
     ];
 
     /**
@@ -39,8 +39,8 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Parking');
     }
-    public function getGravatarAttribute()
+    public function getAvatarAttribute()
     {
-        return Gravatar::get($this->email, ['size' => 150]);
+        return $this->photo ? 'data:image/png;base64,'.$this->photo : Avatar::create($this->fullname)->toBase64();
     }
 }
