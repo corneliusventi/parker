@@ -10,13 +10,14 @@
     "require": {
         "php": "^7.1.3",
         "barryvdh/laravel-dompdf": "^0.8.3",
+        "doctrine/dbal": "^2.9",
         "farhanwazir/laravelgooglemaps": "^2.3",
         "fideloper/proxy": "^4.0",
         "freshbitsweb/laratables": "^1.1",
-        "laravel/framework": "5.7.*",
+        "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "laravolt/avatar": "^2.2",
-        "silber/bouncer": "v1.0.0-rc.4",
+        "silber/bouncer": "v1.0.0-rc.5",
         "simplesoftwareio/simple-qrcode": "^2.0"
     },
     "require-dev": {

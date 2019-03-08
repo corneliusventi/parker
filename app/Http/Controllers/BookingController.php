@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
 use App\ParkingLot;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
@@ -42,7 +43,7 @@ class BookingController extends Controller
             Gmaps::add_marker($marker);
         }
         $map = GMaps::create_map();
-        $map['js'] = str_replace_first('&v=3', '&v=3&libraries=geometry', $map['js']);
+        $map['js'] = Str::replaceFirst('&v=3', '&v=3&libraries=geometry', $map['js']);
         return view('pages.booking', compact('map'));
     }
 
