@@ -9,7 +9,12 @@ class ParkingLot extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'address', 'latitude', 'longitude'];
+    protected $fillable = ['name', 'address', 'type', 'latitude', 'longitude'];
+
+    public function slots()
+    {
+        return $this->hasMany('App\Slot');
+    }    
 
     public function parkings()
     {

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateParkingsTable extends Migration
+class CreateSlotsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,17 @@ class CreateParkingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('parkings', function (Blueprint $table) {
+        Schema::create('slots', function (Blueprint $table) {
             $table->increments('id');
-            $table->boolean('status')->default(true);
-            $table->date('date');
-            $table->time('time_start');
-            $table->time('time_end');
-            $table->unsignedInteger('user_id');
+            $table->string('code');
+            $table->integer('order');
+            $table->integer('level')->nullable();
+            $table->longText('qrcode');
             $table->unsignedInteger('parking_lot_id');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unique(['code', 'parking_lot_id']);
             $table->foreign('parking_lot_id')->references('id')->on('parking_lots')->onDelete('cascade');
         });
     }
@@ -35,6 +35,6 @@ class CreateParkingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('parkings');
+        Schema::dropIfExists('slots');
     }
 }

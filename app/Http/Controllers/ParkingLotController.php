@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Freshbitsweb\Laratables\Laratables;
 use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
 use PDF;
+use QrCode;
 
 class ParkingLotController extends Controller
 {
@@ -63,16 +64,32 @@ class ParkingLotController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'in:street,building'],
             'latitude' => ['required', 'string', 'max:255'],
             'longitude' => ['required', 'string', 'max:255'],
+            'slots.*.code' => ['required'],
+            'slots.*.level' => ['required_if:type,building'],
+        ], [
+            'slots.*.code.required' => 'The code every slots is required',
+            'slots.*.level.required_if' => 'The level every slots is required if type is building',
         ]);
 
-        ParkingLot::create([
+        $parkingLot = ParkingLot::create([
             'name' => $request->name,
             'address' => $request->address,
+            'type' => $request->type,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
         ]);
+
+        foreach ($request->slots as $key => $slot) {
+            $parkingLot->slots()->create([
+                'order' => $key,
+                'code' => $slot['code'],
+                'qrcode' => base64_encode(QrCode::format('png')->merge('/public/apple-icon.png')->size(500)->generate('PARKER-'.$parkingLot->id.'-'.$slot['code'])),
+                'level' => $slot['level'],
+            ]);
+        }
 
         return redirect()->route('parking-lot.index')->withStatus('Parking Lot has been saved');
     }
