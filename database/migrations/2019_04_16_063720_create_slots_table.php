@@ -15,15 +15,14 @@ class CreateSlotsTable extends Migration
     {
         Schema::create('slots', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('code');
-            $table->integer('order');
             $table->integer('level')->nullable();
+            $table->string('code');
             $table->longText('qrcode');
+            $table->boolean('active')->default(true);
             $table->unsignedInteger('parking_lot_id');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['code', 'parking_lot_id']);
             $table->foreign('parking_lot_id')->references('id')->on('parking_lots')->onDelete('cascade');
         });
     }

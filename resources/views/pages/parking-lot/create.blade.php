@@ -11,43 +11,75 @@
         @csrf
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" class="form-control" name="name" id="name" placeholder="Name" required>
+            <input type="text" class="form-control" name="name" id="name" placeholder="Name" value="{{ old('name') }}" required>
         </div>
         <div class="form-group">
             <label for="address">Address</label>
-            <input type="text" class="form-control" name="address" id="address" placeholder="Address" required>
+            <input type="text" class="form-control" name="address" id="address" placeholder="Address" value="{{ old('address') }}" required>
         </div>
         <div class="form-group">
             <label for="type">Type</label>
-            <select class="custom-select" id="type" name="type">
-                <option selected>Pick Type</option>
-                <option value="street">Street</option>
-                <option value="building">Building</option>
+            <select class="custom-select" id="type" name="type" required>
+                <option value="" {{ old('type') =='' ? 'selected' : ''}}>Pick Type</option>
+                <option value="street" {{ old('type') =='street' ? 'selected' : ''}}>Street</option>
+                <option value="building" {{ old('type') =='building' ? 'selected' : ''}}>Building</option>
             </select>
+        </div>
+        <div id="slots" class="form-group">
+            <div class="row">
+                <div class="col">
+                    <label>Slots</label>
+                </div>
+            </div>
+            @if (count(old('slots') ?? []) <= 1)
+                
+                <div class="input-group mb-1">
+                    <div class="input-group-prepend" style="display: none;">
+                        <span class="input-group-text level">Level 1</span>
+                    </div>
+                    <input type="text" class="form-control slot" name="slots[]" placeholder="Slots" required value="{{ old('slots') && count(old('slots')) == 1 ? old('slots')[0] : '' }}">
+                    <div class="input-group-append" style="display: none;">
+                        <button class="btn btn-outline-primary" type="button" id="add-slot">
+                            <span aria-hidden="true">&plus;</span>
+                        </button>
+                    </div>
+                </div>
+
+            @else
+                @foreach (old('slots') as $slot)
+
+                    <div class="input-group mb-1">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text level">Level {{ $loop->index + 1 }}</span>
+                        </div>
+                        <input type="text" class="form-control slot" name="slots[]" placeholder="Slots" required value="{{ $slot }}">
+                        <div class="input-group-append">
+                            @if ($loop->first)
+                                <button class="btn btn-outline-primary" type="button" id="add-slot">
+                                    <span aria-hidden="true">&plus;</span>
+                                </button>
+                            @else
+                                <button class="btn btn-outline-danger delete-slot" type="button">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+
+                @endforeach
+            @endif
         </div>
         <div class="form-group">
             <label>Latitude & Longitude</label>
             <div class="input-group">
-                <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Latitude" readonly required>
-                <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Longitude" readonly required>
+                <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Latitude" value="{{ old('latitude') }}" readonly required>
+                <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Longitude" value="{{ old('longitude') }}" readonly required>
             </div>
         </div>
         <div class="form-group">
             {!! $map['html'] !!}
         </div>
-        <div id="slots" class="form-group">
-            <label>Slots</label>
-            <div class="input-group mb-1">
-                <input type="text" class="form-control code" name="slots[0][code]" placeholder="Code" required value="001">
-                <input type="text" class="form-control level" name="slots[0][level]" placeholder="Level" style="display: none;">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-primary" type="button" id="add-slot">
-                        <span aria-hidden="true">&plus;</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <button type="submit" name="save" id="save" class="btn btn-primary btn-block rounded">Save</button>
+        <button type="submit" id="save" class="btn btn-primary btn-block rounded">Save</button>
     </form>
 @endsection
 
@@ -57,12 +89,6 @@
         let parkingLotMarker;
         const defaultZoomIn = 17;
 
-        function pad(num, size) {
-            var s = num+"";
-            while (s.length < size) s = "0" + s;
-            return s;
-        }
-
         function cleave(className) {
             $(className).toArray().forEach(function(field){
                 new Cleave(field, {
@@ -71,7 +97,7 @@
                 })
             });
         }
-        cleave('.level');
+        cleave('.slot');
             
         function updateLatLngInput(location) {
             $('#latitude').val(location.lat());
@@ -97,50 +123,54 @@
                 });
             }
         }
+
+        function mapOnTilesLoaded() {
+            @if (old('latitude') && old('longitude'))
+                let old = new google.maps.LatLng(parseFloat("{{ old('latitude') }}"), parseFloat("{{ old('longitude') }}"));
+                placeMarker(old);
+            @endif
+        }
+
         function mapOnClick(event) {
             placeMarker(event.latLng);
             updateLatLngInput(event.latLng);
         }
         
         $('#add-slot').click(function (event) {
-            let slots = $('#slots').children().length - 1;
+            let slots = $('#slots').children().length - 1; //remove the label from length
             
             $('#slots').append(`
                 <div class="input-group mb-1">
-                    <input type="text" class="form-control code" name="slots[${slots}][code]" placeholder="Code" required value="${pad((slots+1), 3)}">
-                    <input type="text" class="form-control level" name="slots[${slots}][level]" placeholder="Level">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text level">Level ${slots + 1}</span>
+                    </div>
+                    <input type="text" class="form-control slot" name="slots[]" placeholder="Slots" required>
                     <div class="input-group-append">
                         <button class="btn btn-outline-danger delete-slot" type="button">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                 </div>
-            `)
-
-            if($('#type').val() == 'building') {
-                cleave('.level');
-            } else {
-                $('.level').hide();
-            }
+            `);
+            cleave('.slot');
             
         });
         
         $('#slots').on('click', '.delete-slot', function (event) {
             $(this).closest('.input-group').remove();
             $('#slots').children().slice(1).each(function(key) {
-                $(this).find('.code').prop('name', `slots[${key}][code]`);
-                $(this).find('.code').val(pad((key+1), 3));
-                $(this).find('.level').prop('name', `slots[${key}][level]`);
+                $(this).find('.level').text(`Level ${ key+1 }`);
             });
         });
 
         $('#type').on('change', function (event) {
             if(event.target.value === 'building') {
-                $('.level').fadeIn();
-                $('.level').prop('required', true);
+                $('#add-slot').closest('.input-group-append').fadeIn();
+                $('.level').closest('.input-group-prepend').fadeIn();
             } else {
-                $('.level').fadeOut(); 
-                $('.level').prop('required', false);
+                $('#add-slot').closest('.input-group-append').fadeOut();
+                $('.level').closest('.input-group-prepend').fadeOut();
+                $('#slots').children().not(':nth-child(1), :nth-child(2)').remove();
             }
         });
 

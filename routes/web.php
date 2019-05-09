@@ -36,11 +36,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/profile/photo', 'ProfileController@updatePhoto')->name('profile.update.photo');
 
     Route::resource('user', 'UserController')->only(['index']);
-    Route::resource('parking-lot', 'ParkingLotController')->except(['show']);
+    
+    Route::resource('slot', 'SlotController')->only(['update']);
+    Route::get('slot/{slot}/print', 'SlotController@print')->name('slot.print');
+
+    Route::resource('parking-lot', 'ParkingLotController');
     Route::get('parking-lot/{parking_lot}/print', 'ParkingLotController@print')->name('parking-lot.print');
-    // Route::get('/about', function () {
-    //     return view('pages.about');
-    // })->name('about');
+    
 
 });
 

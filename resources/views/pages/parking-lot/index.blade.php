@@ -11,6 +11,7 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Type</th>
                 <th>Address</th>
                 <th>Action</th>
             </tr>
@@ -54,11 +55,18 @@
             columns: [
                 { name: 'id' },
                 { name: 'name' },
+                { name: 'type' },
                 { name: 'address' },
                 { name: 'action' },
                 // { name: 'role.name', orderable: false },
                 // { name: 'action', orderable: false, searchable: false }
             ],
+            drawCallback: function() {
+                feather.replace({
+                    width: '16',
+                    height: '16', 
+                })
+            }
         });
 
          $('#deleteModal').on('show.bs.modal', function (event) {

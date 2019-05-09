@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\ParkingLot;
+use App\Slot;
 use Illuminate\Http\Request;
 use Freshbitsweb\Laratables\Laratables;
 use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
+use DB;
 use PDF;
 use QrCode;
 
@@ -45,6 +47,7 @@ class ParkingLotController extends Controller
         $config['center'] = '-0.03109, 109.32199'; //Pontianak
         $config['zoom'] = 15;
         $config['onclick'] = 'mapOnClick(event)';
+        $config['ontilesloaded'] = 'mapOnTilesLoaded()';
         GMaps::initialize($config);
         $map = GMaps::create_map();
 
@@ -67,28 +70,43 @@ class ParkingLotController extends Controller
             'type' => ['required', 'in:street,building'],
             'latitude' => ['required', 'string', 'max:255'],
             'longitude' => ['required', 'string', 'max:255'],
-            'slots.*.code' => ['required'],
-            'slots.*.level' => ['required_if:type,building'],
-        ], [
-            'slots.*.code.required' => 'The code every slots is required',
-            'slots.*.level.required_if' => 'The level every slots is required if type is building',
+            'slots.*' => ['required', 'integer'],
         ]);
+        try {
+            DB::beginTransaction();
 
-        $parkingLot = ParkingLot::create([
-            'name' => $request->name,
-            'address' => $request->address,
-            'type' => $request->type,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-        ]);
-
-        foreach ($request->slots as $key => $slot) {
-            $parkingLot->slots()->create([
-                'order' => $key,
-                'code' => $slot['code'],
-                'qrcode' => base64_encode(QrCode::format('png')->merge('/public/apple-icon.png')->size(500)->generate('PARKER-'.$parkingLot->id.'-'.$slot['code'])),
-                'level' => $slot['level'],
+            $parkingLot = ParkingLot::create([
+                'name' => $request->name,
+                'address' => $request->address,
+                'type' => $request->type,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
             ]);
+
+            if($request->type == 'street') {
+                for ($i=0; $i < $request->slots[0]; $i++) { 
+                    $parkingLot->slots()->create([
+                        'code' => 'PARKER-'.$parkingLot->id.'-0-'.($i+1),
+                        'qrcode' => base64_encode(QrCode::format('png')->merge('/public/apple-icon.png')->size(500)->generate('PARKER-'.$parkingLot->id.'-0-'.($i+1))),
+                    ]);
+                }
+            } else {
+                foreach ($request->slots as $key => $slot) {
+                    for ($i=0; $i < $slot; $i++) { 
+                        $parkingLot->slots()->create([
+                            'level' => ($key+1),
+                            'code' => 'PARKER-'.$parkingLot->id.'-'.($key+1).'-'.($i+1),
+                            'qrcode' => base64_encode(QrCode::format('png')->merge('/public/apple-icon.png')->size(500)->generate('PARKER-'.$parkingLot->id.'-'.($key+1).'-'.($i+1))),
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('parking-lot.index')->withStatus('Parking Lot could not been saved');
         }
 
         return redirect()->route('parking-lot.index')->withStatus('Parking Lot has been saved');
@@ -100,9 +118,31 @@ class ParkingLotController extends Controller
      * @param  \App\ParkingLot  $parkingLot
      * @return \Illuminate\Http\Response
      */
-    public function show(ParkingLot $parkingLot)
+    public function show(Request $request, ParkingLot $parkingLot)
     {
-        //
+        $this->authorize('show', $parkingLot);
+
+        if ($request->ajax()) {
+            return Laratables::recordsOf(Slot::class, function ($query) use ($parkingLot)
+            {
+                return $query->where('parking_lot_id', $parkingLot->id);
+            });
+        } else {
+            $config = array();
+            $config['center'] = "$parkingLot->latitude, $parkingLot->longitude";
+            $config['zoom'] = 17;
+            $config['onclick'] = 'mapOnClick(event)';
+
+            $marker = array();
+            $marker['id'] = 'parking_lot';
+            $marker['position'] = $parkingLot->latitude . ',' . $parkingLot->longitude;
+            $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=38c172&color=FFF&hoffset=-1';
+            Gmaps::add_marker($marker);
+
+            GMaps::initialize($config);
+            $map = GMaps::create_map();
+            return view('pages.parking-lot.show', compact('parkingLot', 'map'));
+        }
     }
 
     /**
@@ -111,27 +151,36 @@ class ParkingLotController extends Controller
      * @param  \App\ParkingLot  $parkingLot
      * @return \Illuminate\Http\Response
      */
-    public function edit(ParkingLot $parkingLot)
+    public function edit(Request $request, ParkingLot $parkingLot)
     {
         $this->authorize('edit', $parkingLot);
 
+        if ($request->ajax()) {
+            return Laratables::recordsOf(Slot::class, function ($query) use ($parkingLot)
+            {
+                return $query->where('parking_lot_id', $parkingLot->id);
+            });
+        } else {
 
-        $config = array();
-        $config['center'] = "$parkingLot->latitude, $parkingLot->longitude"; //Pontianak
-        $config['zoom'] = 15;
-        $config['onclick'] = 'mapOnClick(event)';
+            $config = array();
+            $config['center'] = "$parkingLot->latitude, $parkingLot->longitude"; //Pontianak
+            $config['zoom'] = 15;
+            $config['onclick'] = 'mapOnClick(event)';
+            $config['ontilesloaded'] = 'mapOnTilesLoaded()';
 
-        $marker = array();
-        $marker['id'] = 'parking_lot';
-        $marker['position'] = $parkingLot->latitude . ',' . $parkingLot->longitude;
-        $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=38c172&color=FFF&hoffset=-1';
-        $marker['draggable'] = true;
-        Gmaps::add_marker($marker);
+            $marker = array();
+            $marker['id'] = 'parking_lot';
+            $marker['position'] = $parkingLot->latitude . ',' . $parkingLot->longitude;
+            $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=38c172&color=FFF&hoffset=-1';
+            $marker['draggable'] = true;
+            Gmaps::add_marker($marker);
 
-        GMaps::initialize($config);
-        $map = GMaps::create_map();
+            GMaps::initialize($config);
+            $map = GMaps::create_map();
 
-        return view('pages.parking-lot.edit', compact('map', 'parkingLot'));
+            return view('pages.parking-lot.edit', compact('map', 'parkingLot'));
+        }
+
     }
 
     /**
@@ -151,13 +200,23 @@ class ParkingLotController extends Controller
             'latitude' => ['required', 'string', 'max:255'],
             'longitude' => ['required', 'string', 'max:255'],
         ]);
+        
+        try {
+            DB::beginTransaction();
 
-        $parkingLot->update([
-            'name' => $request->name,
-            'address' => $request->address,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-        ]);
+            $parkingLot->update([
+                'name' => $request->name,
+                'address' => $request->address,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+            ]);
+            
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('parking-lot.index')->withStatus('Parking Lot could not been updated');
+        }
 
         return redirect()->route('parking-lot.index')->withStatus('Parking Lot has been updated');
     }
@@ -181,7 +240,9 @@ class ParkingLotController extends Controller
     {
         $this->authorize('print', $parkingLot);
 
-        $pdf = PDF::loadView('pages.parking-lot.pdf', compact('parkingLot'));
+        $slots = $parkingLot->slots;
+
+        $pdf = PDF::loadView('pages.parking-lot.pdf', compact('parkingLot', 'slots'));
         return $pdf->download('parking-lot.pdf');
     }
 }
