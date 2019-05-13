@@ -5,28 +5,21 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Askedio\SoftCascade\Traits\SoftCascadeTrait;
+use Malhal\Geographical\Geographical;
 
 class ParkingLot extends Model
 {
     use SoftDeletes;
     use SoftCascadeTrait;
+    use Geographical;
 
     protected $fillable = ['name', 'address', 'type', 'latitude', 'longitude'];
     protected $softCascade = ['slots'];
+    protected static $kilometers = true;
     
     public function slots()
     {
         return $this->hasMany('App\Slot');
-    }    
-
-    public function parkings()
-    {
-        return $this->hasMany('App\Parking');
-    }
-
-    public function bookings()
-    {
-        return $this->hasMany('App\Booking');
     }
 
     public static function laratablesCustomAction($parkingLot)

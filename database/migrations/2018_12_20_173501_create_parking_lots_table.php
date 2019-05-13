@@ -18,8 +18,8 @@ class CreateParkingLotsTable extends Migration
             $table->string('name');
             $table->text('address');
             $table->enum('type', ['street', 'building']);
-            $table->string('latitude');
-            $table->string('longitude');
+            $table->double('latitude');
+            $table->double('longitude');
             $table->timestamps();
             $table->softDeletes();
         });

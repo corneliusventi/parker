@@ -15,7 +15,7 @@ class ParkingLotController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:manage,App\ParkingLot');
+        $this->middleware('can:manage,App\ParkingLot')->except('available');
     }
     /**
      * Display a listing of the resource.
@@ -244,5 +244,29 @@ class ParkingLotController extends Controller
 
         $pdf = PDF::loadView('pages.parking-lot.pdf', compact('parkingLot', 'slots'));
         return $pdf->download('parking-lot.pdf');
+    }
+
+    public function available(Request $request)
+    {
+        $latitude = $request->latitude;
+        $longitude = $request->longitude;
+        $innerRadius = $request->innerRadius;
+        $outerRadius = $request->outerRadius;
+
+        $parkingLots = ParkingLot::geofence($latitude, $longitude, $innerRadius, $outerRadius)->get();
+            // ->whereHas('slots', function ($query)
+            // {
+            //     $query->whereHas('parkings', function ($query)
+            //     {
+            //         $query->where('status', true);
+            //     }, '>=', 1);
+
+            //     $query->whereHas('bookings', function ($query)
+            //     {
+            //         $query->where('status', true);
+            //     }, '>=', 1);
+            // })->get();
+
+        return response()->json(['status' => 'success', 'parkingLots' => $parkingLots], 200);
     }
 }

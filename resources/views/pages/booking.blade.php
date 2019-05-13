@@ -129,14 +129,37 @@
         $('#parkingPrice').text(parkingPrice);
 
         function showParkingLotInRadius(radius) {
-
-            markers_map.forEach(marker => {
-                if (google.maps.geometry.spherical.computeDistanceBetween(marker.position, destinationMarker.position) <= radius) {
-                    marker.setVisible(true);
-                } else {
-                    marker.setVisible(false);
-                }
-            })
+            let latitude = destinationMarker.position.lat();
+            let longitude = destinationMarker.position.lng();
+            let innerRadius = 0;
+            let outerRadius = radius / 1000;
+            $.ajax({
+                url: "{{ route('parking-lot.available') }}",
+                contentType: 'application/json',
+                method: 'GET',
+                data: {
+                    latitude: latitude,
+                    longitude: longitude,
+                    innerRadius: innerRadius,
+                    outerRadius: outerRadius,
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    let parkingLots = response.parkingLots;
+                    parkingLots.forEach(parkingLot => {
+                        let location = new google.maps.LatLng(parseFloat(parkingLot.latitude), parseFloat(parkingLot.longitude));
+                        new google.maps.Marker({
+                            map: map,
+                            icon: 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=14ACBC&color=FFF&hoffset=-1',
+                            draggable: true,
+                            position: location
+                        });
+                    });
+                                        
+                },
+            });
         }
 
         function placeMarker(location, radius) {

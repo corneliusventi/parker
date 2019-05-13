@@ -25,23 +25,6 @@ class BookingController extends Controller
         $config['onclick'] = 'mapOnClick(event)';
         GMaps::initialize($config);
 
-        $parkingLots = ParkingLot::all();
-        foreach ($parkingLots as $parkingLot) {
-            $marker = array();
-            $marker['position'] = $parkingLot->latitude . ',' . $parkingLot->longitude;
-            $marker['visible'] = false;
-            if ($parkingLot->parkings()->where('status', true)->first() && Carbon::createFromTimeString($parkingLot->parkings()->where('status', true)->first()->time_end)->diffInMinutes(Carbon::now()) <= 60) {
-                $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=ffed4a&color=FFF&hoffset=-1';
-                $marker['infowindow_content'] = "<div class='text-center'><h5>$parkingLot->name</h5><h6 class='pb-4'>$parkingLot->address</h6><p>Available in One Hour</p><button class='btn btn-primary btn-disabled btn-block' data-toggle='modal' data-target='#bookLaterModal' data-name='$parkingLot->name' data-address='$parkingLot->address' data-id='$parkingLot->id'>Book Later</button></div>";
-            } else if ($parkingLot->bookings()->where('status', true)->first() || $parkingLot->parkings()->where('status', true)->first()) {
-                $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=D94B43&color=FFF&hoffset=-1';
-                $marker['infowindow_content'] = "<div class='text-center'><h5>$parkingLot->name</h5><h6 class='pb-4'>$parkingLot->address</h6><button class='btn btn-danger btn-block disabled'>Booked</button></button></div>";
-            } else {
-                $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=14ACBC&color=FFF&hoffset=-1';
-                $marker['infowindow_content'] = "<div class='text-center'><h5>$parkingLot->name</h5><h6 class='pb-4'>$parkingLot->address</h6><p>Available in Now</p><button class='btn btn-primary btn-block' data-toggle='modal' data-target='#bookNowModal' data-id='$parkingLot->id' data-name='$parkingLot->name' data-address='$parkingLot->address'>Book</button><button class='btn btn-secondary btn-block' data-toggle='modal' data-target='#bookLaterModal' data-name='$parkingLot->name' data-address='$parkingLot->address' data-id='$parkingLot->id'>Book Later</button></div>";
-            }
-            Gmaps::add_marker($marker);
-        }
         $map = GMaps::create_map();
         $map['js'] = Str::replaceFirst('&v=3', '&v=3&libraries=geometry', $map['js']);
         return view('pages.booking', compact('map'));

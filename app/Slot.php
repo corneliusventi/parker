@@ -11,11 +11,16 @@ class Slot extends Model
 	
     protected $fillable = ['code', 'level', 'qrcode', 'active'];
 
-    /**
-     * Returns truncated name for the datatables.
-     *
-     * @return string
-     */
+    public function parkings()
+    {
+        return $this->hasMany('App\Parking');
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany('App\Booking');
+    }
+
     public function laratablesActive()
     {
         return $this->active ? 'Active' : 'Disable';
