@@ -35,15 +35,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
     Route::put('/profile/photo', 'ProfileController@updatePhoto')->name('profile.update.photo');
 
-    Route::resource('user', 'UserController')->only(['index']);
-    
+    Route::resource('user', 'UserController');
+
     Route::resource('slot', 'SlotController')->only(['update']);
     Route::get('slot/{slot}/print', 'SlotController@print')->name('slot.print');
 
     Route::get('parking-lot/available', 'ParkingLotController@available')->name('parking-lot.available');
     Route::resource('parking-lot', 'ParkingLotController');
     Route::get('parking-lot/{parking_lot}/print', 'ParkingLotController@print')->name('parking-lot.print');
-    
+
 
 });
-

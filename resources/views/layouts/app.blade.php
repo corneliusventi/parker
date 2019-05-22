@@ -15,6 +15,7 @@
                 </div>
                 <div class="col-auto">
                     @yield('buttons')
+                    @yield('button')
                 </div>
             </div>
             @hasSection ('content')

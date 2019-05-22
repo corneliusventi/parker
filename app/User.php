@@ -43,4 +43,9 @@ class User extends Authenticatable
     {
         return $this->photo ? 'data:image/png;base64,'.$this->photo : Avatar::create($this->fullname)->toBase64();
     }
+
+    public static function laratablesCustomAction($user)
+    {
+        return view('pages.user.action', compact('user'))->render();
+    }
 }

@@ -23,7 +23,7 @@ class UserController extends Controller
         $this->authorize('read', User::class);
         if ($request->ajax()) {
             return Laratables::recordsOf(User::class, function ($query) {
-                return $query->whereIs('user');
+                return $query->whereIsNot('superadministrator');
             });
         } else {
             return view('pages.user.index');

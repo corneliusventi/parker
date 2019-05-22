@@ -1,33 +1,27 @@
-@extends('layouts.app')
-
-@section('title', 'Users')
-
-@section('content')
-    <table id="user-table" class="table" style="width:100%">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Fullname</th>
-                <th>Username</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-    </table>
-@endsection
-
-@push('js')
-    <script>
-        $('#user-table').DataTable({
-            serverSide: true,
-            ajax: "{{ route('user.index') }}",
-            columns: [
-                { name: 'id' },
-                { name: 'fullname' },
-                { name: 'username' },
-                { name: 'email' },
-                // { name: 'role.name', orderable: false },
-                // { name: 'action', orderable: false, searchable: false }
-            ],
-        });
-    </script>
-@endpush
+@extends('layouts.bread.index', [
+    'title' => 'Users',
+    'columns' => [
+        [
+            'name' => 'id',
+            'display_name' => 'ID',
+        ],
+        [
+            'name' => 'fullname',
+            'display_name' => 'Fullname',
+        ],
+        [
+            'name' => 'username',
+            'display_name' => 'Username',
+        ],
+        [
+            'name' => 'email',
+            'display_name' => 'Email',
+        ],
+        [
+            'name' => 'action',
+            'display_name' => 'Action',
+        ],
+    ],
+    'ajax' => route('user.index'),
+    'create' => route('user.create'),
+])
