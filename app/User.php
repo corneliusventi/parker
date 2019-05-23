@@ -46,6 +46,11 @@ class User extends Authenticatable
 
     public static function laratablesCustomAction($user)
     {
-        return view('pages.user.action', compact('user'))->render();
+        return view('pages.users.action', compact('user'))->render();
+    }
+
+    public static function laratablesCustomRole($user)
+    {
+        return $user->roles->first()->title;
     }
 }

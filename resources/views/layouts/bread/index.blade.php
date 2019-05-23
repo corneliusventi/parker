@@ -3,7 +3,11 @@
 @section('title', $title ?? 'Title')
 
 @section('button')
-    <a href="{{ $create ?? '#' }}" class="btn btn-primary">Create</a>
+
+    @link(['url' => $create])
+        Create
+    @endlink
+
 @endsection
 
 @section('content')

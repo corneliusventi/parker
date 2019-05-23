@@ -35,7 +35,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
     Route::put('/profile/photo', 'ProfileController@updatePhoto')->name('profile.update.photo');
 
-    Route::resource('user', 'UserController');
+    Route::resource('users', 'UserController');
 
     Route::resource('slot', 'SlotController')->only(['update']);
     Route::get('slot/{slot}/print', 'SlotController@print')->name('slot.print');

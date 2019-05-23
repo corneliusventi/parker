@@ -18,10 +18,14 @@
             'display_name' => 'Email',
         ],
         [
+            'name' => 'role',
+            'display_name' => 'Role',
+        ],
+        [
             'name' => 'action',
             'display_name' => 'Action',
         ],
     ],
-    'ajax' => route('user.index'),
-    'create' => route('user.create'),
+    'ajax' => route('users.index'),
+    'create' => route('users.create'),
 ])

@@ -11,7 +11,7 @@
         @endforeach 
     @endisset
 
-    class="btn btn-{{ $color ?? 'primary' }} {{ $class ?? '' }}">
+    class="btn btn-{{ $color ?? 'primary' }} {{ $class ?? '' }} rounded">
 
     {{ $slot }}
 
