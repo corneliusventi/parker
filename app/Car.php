@@ -20,14 +20,6 @@ class Car extends Model
         return $this->belongsTo('App\User');
     }
 
-    public static function laratablesModifyCollection($cars)
-    {
-        return $cars->filter(function ($car)
-        {
-            return $car->user->is(auth()->user());
-        });
-    }
-
     public static function laratablesCustomAction($car)
     {
         return view('pages.cars.action', compact('car'))->render();

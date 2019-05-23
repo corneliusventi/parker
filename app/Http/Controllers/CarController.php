@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Car;
 use Illuminate\Http\Request;
 use Freshbitsweb\Laratables\Laratables;
+use Illuminate\Support\Facades\DB;
 
 class CarController extends Controller
 {
@@ -23,7 +24,10 @@ class CarController extends Controller
         $this->authorize('read', Car::class);
 
         if ($request->ajax()) {
-            return Laratables::recordsOf(Car::class);
+            return Laratables::recordsOf(Car::class, function ($query)
+            {
+                return $query->where('user_id', auth()->id());
+            });
         } else {
             return view('pages.cars.index');
         }
@@ -49,7 +53,31 @@ class CarController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('store', Car::class);
+
+        $request->validate([
+            'plate' => 'required|string',
+            'brand' => 'required|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $car = new Car([
+                'plate' => $request->plate,
+                'brand' => $request->brand,
+            ]);
+
+            auth()->user()->cars()->save($car);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('cars.index')->withStatus('Car could not been saved');
+        }
+
+        return redirect()->route('cars.index')->withStatus('Car has been saved');
     }
 
     /**
@@ -60,7 +88,9 @@ class CarController extends Controller
      */
     public function show(Car $car)
     {
-        //
+        $this->authorize('show', $car);
+
+        return view('pages.cars.show', compact('car'));
     }
 
     /**
@@ -71,7 +101,9 @@ class CarController extends Controller
      */
     public function edit(Car $car)
     {
-        //
+        $this->authorize('edit', $car);
+
+        return view('pages.cars.edit', compact('car'));
     }
 
     /**
@@ -83,7 +115,29 @@ class CarController extends Controller
      */
     public function update(Request $request, Car $car)
     {
-        //
+        $this->authorize('update', $car);
+
+        $request->validate([
+            'plate' => 'required|string',
+            'brand' => 'required|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $car->update([
+                'plate' => $request->plate,
+                'brand' => $request->brand,
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('cars.index')->withStatus('Car could not been updated');
+        }
+
+        return redirect()->route('cars.index')->withStatus('Car has been updated');
     }
 
     /**
@@ -94,6 +148,20 @@ class CarController extends Controller
      */
     public function destroy(Car $car)
     {
-        //
+        $this->authorize('delete', $car);
+
+        try {
+            DB::beginTransaction();
+
+            $car->delete();
+
+            DB::commit();
+        } catch (Excaption $e) {
+            DB::rollBack();
+
+            return redirect()->route('cars.index')->withStatus('Car could not been deleted');
+        }
+
+        return redirect()->route('cars.index')->withStatus('Car has been deleted');
     }
 }

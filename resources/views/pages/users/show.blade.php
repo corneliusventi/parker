@@ -2,19 +2,19 @@
     'title' => 'Show User',
     'details' => [
         [
-            'name' => 'id',
+            'name' => 'ID',
             'value' => $user->id,
         ],
         [
-            'name' => 'fullname',
+            'name' => 'Fullname',
             'value' => $user->fullname,
         ],
         [
-            'name' => 'username',
+            'name' => 'Username',
             'value' => $user->username,
         ],
         [
-            'name' => 'email',
+            'name' => 'Email',
             'value' => $user->email,
         ],
     ],
