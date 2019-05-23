@@ -24,7 +24,7 @@
         </div>
         @can('manage', \App\User::class)
             <div class="col-4 col-md-12 order-5 order-md-6">
-                <a href="{{ route('user.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="users"></i> Users</a>
+                <a href="{{ route('users.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="users"></i> Users</a>
             </div>
         @endcan
         @can('manage', \App\ParkingLot::class)

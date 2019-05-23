@@ -30,6 +30,13 @@ class UsersTableSeeder extends Seeder
                 'wallet' => 0,
             ],
             [
+                'fullname' => 'Operator',
+                'username' => 'operator',
+                'email' => 'operator@gmail.com',
+                'password' => bcrypt('cv234789'),
+                'wallet' => 0,
+            ],
+            [
                 'fullname' => 'Cornelius Venti',
                 'username' => 'corneliusventi',
                 'email' => 'corneliusventi@gmail.com',
@@ -37,10 +44,13 @@ class UsersTableSeeder extends Seeder
                 'wallet' => 50000,
             ],
         ]);
+
         $superadministrator = User::where('username', 'superadministrator')->first();
         $superadministrator->assign('superadministrator');
         $administrator = User::where('username', 'administrator')->first();
         $administrator->assign('administrator');
+        $operator = User::where('username', 'operator')->first();
+        $operator->assign('operator');
         $corneliusventi = User::where('username', 'corneliusventi')->first();
         $corneliusventi->assign('user');
 

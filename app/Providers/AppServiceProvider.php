@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Blade::component('components.button', 'button');
+        Blade::component('components.form', 'form');
+        Blade::component('components.input', 'input');
+        Blade::component('components.link', 'link');
+        Blade::component('components.select', 'select');
     }
 
     /**
