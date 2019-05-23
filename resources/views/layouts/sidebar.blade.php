@@ -12,7 +12,7 @@
         <div class="col-md-12 d-none d-md-block order-3 order-md-3">
             <h4 class="pt-1">{{ auth()->user()->fullname }}</h4>
         </div>
-        <div class="col-12 col-md-12 order-12 order-md-4">
+        <div class="col-12 col-md-12 order-13 order-md-4">
             @if (auth()->user()->isA('superadministrator') || auth()->user()->isAn('administrator'))
                 <h6 class="mb-4">{{ auth()->user()->getRoles()->first() }}</h6>
             @else
@@ -32,27 +32,32 @@
                 <a href="{{ route('parking-lot.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="flag"></i>Parking Lots</a>
             </div>
         @endcan
-        @can('booking')
+        @can('manage', \App\Car::class)
             <div class="col-4 col-md-12 order-7 order-md-8">
+                <a href="{{ route('cars.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="truck"></i>Cars</a>
+            </div>
+        @endcan
+        @can('booking')
+            <div class="col-4 col-md-12 order-8 order-md-9">
                 <a href="{{ route('booking.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="book-open"></i> Booking</a>
             </div>
         @endcan
         @can('parking')
-            <div class="col-4 col-md-12 order-8 order-md-9">
+            <div class="col-4 col-md-12 order-9 order-md-10">
                 <a href="{{ route('parking.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="map-pin"></i> Parking</a>
             </div>
         @endcan
         @can('topup')
-            <div class="col-4 col-md-12 order-9 order-md-10">
+            <div class="col-4 col-md-12 order-10 order-md-11">
                 <a href="{{ route('topup') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="dollar-sign"></i> Top Up</a>
             </div>
         @endcan
         @can('change-profile')
-            <div class="col-4 col-md-12 order-10 order-md-11">
+            <div class="col-4 col-md-12 order-11 order-md-12">
                 <a href="{{ route('profile') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="user"></i> Profile</a>
             </div>
         @endcan
-        <div class="col-4 col-md-12 order-11 order-md-112">
+        <div class="col-4 col-md-12 order-12 order-md-13">
             <form action="{{ route('logout') }}" method="post">
                 @csrf
                 <button type="submit" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="log-out"></i> Logout</button>
@@ -86,7 +91,7 @@
         feather.replace({
             class: 'd-none d-md-inline align-middle mr-1',
             width: '22',
-            height: '22', 
+            height: '22',
         })
     </script>
 @endpush
