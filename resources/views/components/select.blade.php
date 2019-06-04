@@ -15,7 +15,7 @@
             @if (is_array($option))
                 <option
                     value="{{ $option['value'] }}"
-                    {{ isset($selected) && $option->is($selected) ? 'selected' : '' }}
+                    {{ isset($selected) && $option['value'] == $selected ? 'selected' : '' }}
                     >
                     {{ $option['text'] }}
                 </option>
