@@ -17,6 +17,10 @@
             'name' => 'address',
             'display_name' => 'Address',
         ],
+        [
+            'name' => 'user.fullname',
+            'display_name' => 'Operator',
+        ],
     ],
     'ajax' => route('parking-lots.index'),
     'create' => route('parking-lots.create'),

@@ -33,6 +33,14 @@
         Address
     @endinput
 
+    @select([
+        'name' => 'operator',
+        'required' => true,
+        'options' => $operators,
+    ])
+        Operator
+    @endselect
+
     @map([
         'map' => $map,
         'latitude' => [

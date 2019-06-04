@@ -10,6 +10,7 @@ use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
 use DB;
 use PDF;
 use QrCode;
+use App\User;
 
 class ParkingLotController extends Controller
 {
@@ -50,7 +51,10 @@ class ParkingLotController extends Controller
         GMaps::initialize($config);
         $map = GMaps::create_map();
 
-        return view('pages.parking-lots.create', compact('map'));
+
+        $operators = User::whereIs('operator')->doesntHave('parkingLot')->get();
+
+        return view('pages.parking-lots.create', compact('map', 'operators'));
     }
 
     /**
@@ -69,6 +73,7 @@ class ParkingLotController extends Controller
             'type' => ['required', 'in:street,building'],
             'latitude' => ['required', 'string', 'max:255'],
             'longitude' => ['required', 'string', 'max:255'],
+            'operator' => ['required', 'exists:users,id'],
         ]);
 
         try {
@@ -80,6 +85,7 @@ class ParkingLotController extends Controller
                 'type' => $request->type,
                 'latitude' => $request->latitude,
                 'longitude' => $request->longitude,
+                'user_id' => $request->operator,
             ]);
 
             DB::commit();
