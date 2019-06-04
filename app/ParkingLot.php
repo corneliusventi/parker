@@ -16,15 +16,10 @@ class ParkingLot extends Model
     protected $fillable = ['name', 'address', 'type', 'latitude', 'longitude'];
     protected $softCascade = ['slots'];
     protected static $kilometers = true;
-    
+
     public function slots()
     {
         return $this->hasMany('App\Slot');
-    }
-
-    public static function laratablesCustomAction($parkingLot)
-    {
-        return view('pages.parking-lot.action', compact('parkingLot'))->render();
     }
 
     public function laratablesType()

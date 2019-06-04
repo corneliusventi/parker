@@ -29,7 +29,7 @@
         @endcan
         @can('manage', \App\ParkingLot::class)
             <div class="col-4 col-md-12 order-6 order-md-7">
-                <a href="{{ route('parking-lot.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="flag"></i>Parking Lots</a>
+                <a href="{{ route('parking-lots.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="flag"></i>Parking Lots</a>
             </div>
         @endcan
         @can('manage', \App\Car::class)
