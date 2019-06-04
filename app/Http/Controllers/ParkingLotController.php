@@ -15,7 +15,7 @@ class ParkingLotController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:manage,App\ParkingLot')->except('available');
+        $this->middleware('can:manage,App\ParkingLot');
     }
     /**
      * Display a listing of the resource.
