@@ -39,8 +39,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('cars', 'CarController');
     Route::resource('parking-lots', 'ParkingLotController')->only(['index', 'create', 'store']);
 
-    Route::resource('slot', 'SlotController')->only(['update']);
-    Route::get('slot/{slot}/print', 'SlotController@print')->name('slot.print');
+    Route::get('slots/code', 'SlotController@code')->name('slots.code');
+    Route::get('slots/{slot}/print', 'SlotController@print')->name('slots.print');
+    Route::resource('slots', 'SlotController')->only(['index', 'create', 'store']);
+
 
 
 });

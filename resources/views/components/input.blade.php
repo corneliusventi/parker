@@ -9,6 +9,7 @@
         id="{{ $id ?? $name }}"
         placeholder="{{ $placeholder ?? $slot }}"
         value="{{ $value ?? old($name) }}"
+        {{ isset($min) && $type == 'number' ? 'min='.$min : '' }}
         {{ isset($required)  ? 'required' : '' }}
         {{ isset($disabled) ? 'disabled' : '' }}
         {{ isset($readonly) ? 'readonly' : '' }}

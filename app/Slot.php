@@ -8,8 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Slot extends Model
 {
 	use SoftDeletes;
-	
-    protected $fillable = ['code', 'level', 'qrcode', 'active'];
+
+    protected $fillable = ['code', 'level', 'qrcode'];
+
+    public function parkingLot()
+    {
+        return $this->belongsTo('App\ParkingLot');
+    }
 
     public function parkings()
     {
@@ -21,21 +26,24 @@ class Slot extends Model
         return $this->hasMany('App\Booking');
     }
 
-    public function laratablesActive()
+    public static function code(ParkingLot $parkingLot, $level = null)
     {
-        return $this->active ? 'Active' : 'Disable';
+        $slotId = $parkingLot->slots->count() + 1;
+        $parkingLotId = $parkingLot->id;
+
+        if ($parkingLot->type == 'building') {
+            if(!$level) {
+                $level = 1;
+            }
+        } else {
+            $level = 0;
+        }
+
+        return "PARKER-$parkingLotId-$level-$slotId";
     }
 
-    public static function laratablesAdditionalColumns()
+    public static function laratablesCustomPrint($slot)
     {
-        return ['active'];
-    }
-    public static function laratablesCustomActiveButton($slot)
-    {
-        return view('pages.slot.active-button', compact('slot'))->render();
-    }
-    public static function laratablesCustomAction($slot)
-    {
-        return view('pages.slot.action', compact('slot'))->render();
+        return view('pages.slots.print', compact('slot'))->render();
     }
 }

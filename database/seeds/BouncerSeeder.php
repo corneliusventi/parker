@@ -19,15 +19,14 @@ class BouncerSeeder extends Seeder
     public function run()
     {
         Bouncer::allow('superadministrator')->toManage(User::class);
-        Bouncer::allow('superadministrator')->toManage(ParkingLot::class);
-        Bouncer::allow('superadministrator')->toManage(Slot::class);
-        Bouncer::allow('superadministrator')->toManage(Slot::class);
-        Bouncer::allow('superadministrator')->to('change-profile');
         Bouncer::allow('administrator')->toManage(User::class);
         Bouncer::allow('administrator')->toManage(ParkingLot::class);
-        Bouncer::allow('administrator')->toManage(Slot::class);
+        Bouncer::allow('administrator')->toManage(Booking::class);
+        Bouncer::allow('administrator')->toManage(Parking::class);
         Bouncer::allow('administrator')->to('change-profile');
         Bouncer::allow('operator')->toManage(Slot::class);
+        Bouncer::allow('operator')->toManage(Parking::class);
+        Bouncer::allow('operator')->toManage(Booking::class);
         Bouncer::allow('operator')->to('change-profile');
         Bouncer::allow('user')->toManage(Car::class);
         Bouncer::allow('user')->to('booking');

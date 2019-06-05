@@ -29,12 +29,17 @@
         @endcan
         @can('manage', \App\ParkingLot::class)
             <div class="col-4 col-md-12 order-6 order-md-7">
-                <a href="{{ route('parking-lots.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="flag"></i>Parking Lots</a>
+                <a href="{{ route('parking-lots.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="flag"></i> Parking Lots</a>
+            </div>
+        @endcan
+        @can('manage', \App\Slot::class)
+            <div class="col-4 col-md-12 order-7 order-md-8">
+                <a href="{{ route('slots.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="grid"></i> Slots</a>
             </div>
         @endcan
         @can('manage', \App\Car::class)
             <div class="col-4 col-md-12 order-7 order-md-8">
-                <a href="{{ route('cars.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="truck"></i>Cars</a>
+                <a href="{{ route('cars.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="truck"></i> Cars</a>
             </div>
         @endcan
         @can('booking')

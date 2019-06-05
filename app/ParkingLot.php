@@ -31,4 +31,14 @@ class ParkingLot extends Model
     {
         return ucwords($this->type);
     }
+
+    public function getOptionValueAttribute()
+    {
+        return $this->id;
+    }
+
+    public function getOptionTextAttribute()
+    {
+        return $this->name;
+    }
 }

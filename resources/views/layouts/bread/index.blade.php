@@ -15,7 +15,9 @@
         <thead>
             <tr>
                 @foreach ($columns as $column)
-                    <th> {{ $column['display_name'] }} </th>
+                    @if((isset($column['if']) && $column['if']) || !isset($column['if']) )
+                        <th> {{ $column['display_name'] }} </th>
+                    @endif
                 @endforeach
             </tr>
         </thead>
@@ -57,7 +59,9 @@
             ajax: "{{ $ajax ?? '#' }}",
             columns: [
                 @foreach ($columns as $column)
-                    { name: '{{ $column['name'] }}' },
+                    @if((isset($column['if']) && $column['if']) || !isset($column['if']) )
+                        { name: '{{ $column['name'] }}' },
+                    @endif
                 @endforeach
             ],
             drawCallback: function() {
