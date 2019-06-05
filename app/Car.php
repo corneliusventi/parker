@@ -20,8 +20,4 @@ class Car extends Model
         return $this->belongsTo('App\User');
     }
 
-    public static function laratablesCustomAction($car)
-    {
-        return view('pages.cars.action', compact('car'))->render();
-    }
 }
