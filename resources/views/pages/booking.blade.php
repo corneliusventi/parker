@@ -31,7 +31,7 @@
                 <form action="{{ route('booking.book') }}" method="POST">
                     <div class="modal-body">
                         @csrf
-                        <input type="hidden" class="parkingLotId" name="parking_lot_id" value="">
+                        <input type="hidden" class="parkingLotId" name="parking_lot" value="">
                         <p>
                             <span class="parkingLotName"></span>
                             -
@@ -47,14 +47,14 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="slot" class="col-form-label">Slot</label>
-                            <select class="custom-select" id="slot" name="slot">
+                        <div class="level form-group d-none">
+                            <label for="level" class="col-form-label">Level</label>
+                            <select class="custom-select" id="level" name="level">
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="level" class="col-form-label">Level</label>
-                            <select class="custom-select" id="level" name="level">
+                            <label for="slot" class="col-form-label">Slot</label>
+                            <select class="custom-select" id="slot" name="slot">
                             </select>
                         </div>
                         <div class="form-group">
@@ -132,22 +132,38 @@
                             parkingLotName: parkingLot.name,
                             parkingLotAddress: parkingLot.address,
                             parkingLotSlots: parkingLot.slots,
+                            parkingLotType: parkingLot.type,
                             icon: 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=14ACBC&color=FFF&hoffset=-1',
                             position: location
                         });
                         google.maps.event.addListener(marker, 'click', function() {
                             $('#bookingModal').modal();
-                            var name = marker.parkingLotName;
-                            var id = marker.parkingLotId;
-                            var address = marker.parkingLotAddress;
-                            var slots = marker.parkingLotSlots;
-                            var slotSelectbox = $('#slot')
+                            let name = marker.parkingLotName;
+                            let id = marker.parkingLotId;
+                            let address = marker.parkingLotAddress;
+                            let slots = marker.parkingLotSlots;
+                            let type = marker.parkingLotType;
+                            let slotSelectbox = $('#slot')
                             slotSelectbox.empty();
                             slots.forEach(slot => {
-                                let option = `<option value="${slot.id}">${slot.code}</option>`;
+                                let option = `<option value="${slot.id}" data-level="${slot.level}">${slot.code}</option>`;
                                 slotSelectbox.append(option);
                             });
-                            var modal = $('#bookingModal');
+
+                            if(type == 'building') {
+                                $('.level').removeClass('d-none');
+                                let levels = _.chain(slots).map('level').uniq().value();
+                                let levelSelectbox = $('#level')
+                                levelSelectbox.empty();
+                                levels.forEach(level => {
+                                    let option = `<option value="${level}">${level}</option>`;
+                                    levelSelectbox.append(option);
+                                });
+                                $('#slot option').not(`[data-level="1"]`).hide();
+                            } else {
+                                $('.level').addClass('d-none');
+                            }
+                            let modal = $('#bookingModal');
                             modal.find('.parkingLotId').val(id);
                             modal.find('.parkingLotName').text(name);
                             modal.find('.parkingLotAddress').text(address);
@@ -265,6 +281,14 @@
         $('#hourBookNow').change(function () {
             let time = $(this).val();
             $('#totalBookNow').val( bookingPrice + (time * parkingPrice));
+        })
+
+        $('#level').on('change', function (event) {
+            let level = $(this).val();
+            $('#slot option').show();
+            $('#slot option').not(`[data-level="${level}"]`).hide();
+            let slot = $(`#slot option[data-level="${level}"]`).first().val();
+            $('#slot').val(slot);
         })
     </script>
 @endpush

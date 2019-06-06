@@ -106,7 +106,15 @@ class ParkingLotController extends Controller
         $outerRadius = $request->outerRadius;
 
         $parkingLots = ParkingLot::geofence($latitude, $longitude, $innerRadius, $outerRadius)
-            ->with(['slots'])
+            ->with(['slots' => function ($query) {
+                $query->whereHas('parkings', function ($query) {
+                    $query->where('status', true);
+                }, '<', 1);
+
+                $query->whereHas('bookings', function ($query) {
+                    $query->where('status', true);
+                }, '<', 1);
+            }])
             ->whereHas('slots', function ($query) {
                 $query->whereHas('parkings', function ($query) {
                     $query->where('status', true);

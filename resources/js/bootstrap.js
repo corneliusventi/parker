@@ -1,5 +1,5 @@
 
-// window._ = require('lodash')
+window._ = require('lodash')
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -11,7 +11,7 @@ try {
   window.Cleave = require('cleave.js')
   window.Popper = require('popper.js').default
   window.$ = window.jQuery = require('jquery')
-  
+
   require('bootstrap')
   require('datatables.net-bs4')()
 } catch (e) { }
