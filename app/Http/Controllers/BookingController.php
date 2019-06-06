@@ -11,13 +11,11 @@ use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function booking()
     {
+        $cars = auth()->user()->cars;
+
         $config = array();
         $config['center'] = '-0.03109, 109.32199'; //Pontianak
         $config['zoom'] = 15;
@@ -27,26 +25,10 @@ class BookingController extends Controller
 
         $map = GMaps::create_map();
         $map['js'] = Str::replaceFirst('&v=3', '&v=3&libraries=geometry', $map['js']);
-        return view('pages.booking', compact('map'));
+        return view('pages.booking', compact('map', 'cars'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function book(Request $request)
     {
         if (auth()->user()->wallet >= 10000) {
             $parkingLot = ParkingLot::find($request->parking_lot_id);
@@ -72,47 +54,7 @@ class BookingController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Booking  $booking
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Booking $booking)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Booking  $booking
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Booking $booking)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Booking  $booking
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Booking $booking)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Booking  $booking
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Booking $booking)
+    public function cancel(Booking $booking)
     {
         $bookingPrice = 5000;
         $parkingPrice = 1000;

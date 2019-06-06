@@ -16,7 +16,7 @@ class ParkingLotController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:manage,App\ParkingLot');
+        $this->middleware('can:manage,App\ParkingLot')->except('available');
     }
     /**
      * Display a listing of the resource.
@@ -68,24 +68,24 @@ class ParkingLotController extends Controller
         $this->authorize('store', ParkingLot::class);
 
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'in:street,building'],
-            'latitude' => ['required', 'string', 'max:255'],
+            'name'      => ['required', 'string', 'max:255'],
+            'address'   => ['required', 'string', 'max:255'],
+            'type'      => ['required', 'in:street,building'],
+            'latitude'  => ['required', 'string', 'max:255'],
             'longitude' => ['required', 'string', 'max:255'],
-            'operator' => ['required', 'exists:users,id'],
+            'operator'  => ['required', 'exists:users,id'],
         ]);
 
         try {
             DB::beginTransaction();
 
             $parkingLot = ParkingLot::create([
-                'name' => $request->name,
-                'address' => $request->address,
-                'type' => $request->type,
-                'latitude' => $request->latitude,
+                'name'      => $request->name,
+                'address'   => $request->address,
+                'type'      => $request->type,
+                'latitude'  => $request->latitude,
                 'longitude' => $request->longitude,
-                'user_id' => $request->operator,
+                'user_id'   => $request->operator,
             ]);
 
             DB::commit();
@@ -98,4 +98,25 @@ class ParkingLotController extends Controller
         return redirect()->route('parking-lots.index')->withStatus('Parking Lot has been saved');
     }
 
+    public function available(Request $request)
+    {
+        $latitude    = $request->latitude;
+        $longitude   = $request->longitude;
+        $innerRadius = $request->innerRadius;
+        $outerRadius = $request->outerRadius;
+
+        $parkingLots = ParkingLot::geofence($latitude, $longitude, $innerRadius, $outerRadius)
+            ->with(['slots'])
+            ->whereHas('slots', function ($query) {
+                $query->whereHas('parkings', function ($query) {
+                    $query->where('status', true);
+                }, '<', 1);
+
+                $query->whereHas('bookings', function ($query) {
+                    $query->where('status', true);
+                }, '<', 1);
+            })->get();
+
+        return response()->json(['status' => 'success', 'parkingLots' => $parkingLots], 200);
+    }
 }

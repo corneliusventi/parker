@@ -25,7 +25,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/home', 'HomeController@index')->name('home');
 
-    Route::resource('booking', 'BookingController')->only(['index', 'store', 'destroy']);
+    Route::get('booking', 'BookingController@booking')->name('booking.index');
+    Route::post('booking', 'BookingController@book')->name('booking.book');
+    Route::delete('booking', 'BookingController@cancel')->name('booking.cancel');
+
+    Route::resource('bookings', 'BookingController')->only(['index']);
+
     Route::resource('parking', 'ParkingController')->only(['index', 'store']);
 
     Route::get('/topup', 'TopUpController@index')->name('topup');
@@ -37,6 +42,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::resource('users', 'UserController')->only(['index', 'create', 'store']);
     Route::resource('cars', 'CarController');
+
+    Route::get('parking-lots/available', 'ParkingLotController@available')->name('parking-lots.available');
     Route::resource('parking-lots', 'ParkingLotController')->only(['index', 'create', 'store']);
 
     Route::get('slots/code', 'SlotController@code')->name('slots.code');

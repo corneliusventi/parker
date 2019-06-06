@@ -9,7 +9,7 @@ class Booking extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['hour', 'date', 'type', 'time', 'user_id', 'parking_lot_id', 'status'];
+    protected $fillable = ['hour', 'date', 'time', 'user_id', 'parking_lot_id', 'status'];
 
     public function parkingLot()
     {
