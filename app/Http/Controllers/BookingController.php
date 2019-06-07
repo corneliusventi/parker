@@ -11,6 +11,22 @@ use Illuminate\Support\Str;
 class BookingController extends Controller
 {
 
+    public function __construct()
+    {
+
+        $this->middleware('can:booking');
+
+        $this->middleware(function ($request, $next) {
+            $parkings = auth()->user()->parkings->where('status', true);
+            $parking = $parkings->first();
+            if ($parking) {
+                return redirect()->route('parking.index')->withStatus('Already Booking');
+            }
+
+            return $next($request);
+        });
+    }
+
     public function booking()
     {
         $bookings = auth()->user()->bookings->where('status', true);
@@ -27,7 +43,6 @@ class BookingController extends Controller
             $config['directions'] = true;
             $config['directionsStart'] = 'auto';
             $config['directionsEnd'] = $booking->parkingLot->latitude . ', ' . $booking->parkingLot->longitude;
-            $config['directionsDivID'] = 'directions';
             GMaps::initialize($config);
 
             $marker = array();
@@ -86,18 +101,11 @@ class BookingController extends Controller
         $parkingPrice = 1000;
 
         $user = auth()->user();
-        if ($booking->type == 'later') {
-            if (now()->lte(Carbon::createFromTimeString($booking->time)->subMinute(30))) {
-                $user->update([
-                    'wallet' => $user->wallet + ($parkingPrice * $booking->hour)
-                ]);
-            }
-        } else if ($booking->type == 'now') {
-            if (Carbon::createFromTimeString($booking->time)->lte(now()->addMinute(30))) {
-                $user->update([
-                    'wallet' => $user->wallet + ($parkingPrice * $booking->hour)
-                ]);
-            }
+
+        if (Carbon::createFromTimeString($booking->time)->lte(now()->addMinute(30))) {
+            $user->update([
+                'wallet' => $user->wallet + ($parkingPrice * $booking->hour)
+            ]);
         }
 
         $booking->delete();

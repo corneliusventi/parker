@@ -6,41 +6,32 @@
     <table class="table">
         <tr>
             <th>Parking Lot</th>
-            <td>{{ $booking->parkingLot->name }}</td>
+            <td>{{ $parking->parkingLot->name }}</td>
         </tr>
         <tr>
             <th>Address</th>
-            <td>{{ $booking->parkingLot->address }}</td>
+            <td>{{ $parking->parkingLot->address }}</td>
         </tr>
         <tr>
             <th>Code</th>
-            <td>{{ $booking->slot->code }}</td>
+            <td>{{ $parking->slot->code }}</td>
         </tr>
-        @if ($booking->parkingLot->type == 'building')
+        @if ($parking->parkingLot->type == 'building')
             <tr>
                 <th>Level</th>
-                <td>{{ $booking->slot->level }}</td>
+                <td>{{ $parking->slot->level }}</td>
             </tr>
         @endif
         <tr>
-            <th>Time</th>
-            <td>{{ $booking->time }}</td>
-        </tr>
-        <tr>
-            <th>Hour</th>
-            <td>{{ $booking->hour }}</td>
+            <th>Time Left</th>
+            <td>
+                {{ \Carbon\Carbon::parse($parking->time_end)->diffForHumans() }}
+            </td>
         </tr>
     </table>
-    <div class="row">
-        <div class="col-6">
-            <botton class="btn btn-primary btn-block" data-toggle="modal" data-target="#scanModal">Scan</botton>
-        </div>
-        <div class="col-6">
-            <a href="{{ route('booking.cancel') }}" class="btn btn-danger btn-block" data-toggle="modal" data-target="#cancelModal">Cancel</a>
-        </div>
-    </div>
-@endsection
 
+    <a href="{{ route('parking.leave') }}" class="btn btn-primary btn-block" data-toggle="modal" data-target="#scanModal">Scan</a>
+@endsection
 
 @section('modal')
 
@@ -55,12 +46,12 @@
                 </div>
                 <div class="modal-body text-center">
                     <p>
-                        <span class="parkingLotName">{{ $booking->parkingLot->name }}</span>
+                        <span class="parkingLotName">{{ $parking->parkingLot->name }}</span>
                         -
-                        <span class="parkingLotAddress">{{ $booking->parkingLot->address }}</span>
+                        <span class="parkingLotAddress">{{ $parking->parkingLot->address }}</span>
                     </p>
                     <p>
-                        {{ $booking->slot->code }}
+                        {{ $parking->slot->code }}
                     </p>
                     <div class="p-4 embed-responsive embed-responsive-16by9 ">
                         <video class="embed-responsive-item" id="camera"></video>
@@ -70,29 +61,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cancelModalLabel">Cancel Comfirmation</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="{{ route('booking.cancel') }}" method="POST">
-                    @csrf
-                    @method('delete')
-                    <div class="modal-body">
-                        Are you sure you want to cancel?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                        <button type="submit" class="btn btn-danger">Yes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @push('js')
@@ -116,24 +84,23 @@
                 console.error(e);
             });
             scanner.addListener('scan', function (content) {
-                let code = '{{ $booking->slot->code }}';
-                let parking = '{{ $booking->parkingLot->id }}';
-                let booking = '{{ $booking->id }}';
+                let code = '{{ $parking->slot->code }}';
+                let parkingLot = '{{ $parking->parkingLot->id }}';
+                let parking = '{{ $parking->id }}';
                 let user = '{{ auth()->id() }}';
                 if(code == content) {
                     scanner.stop();
                     $('#scanModal').modal('hide');
-                    $.redirect("{{ route('parking.park') }}", {
+                    $.redirect("{{ route('parking.leave') }}", {
                         _token: document.head.querySelector('meta[name="csrf-token"]').content,
-                        parking_lot_id: parking,
-                        booking_id: booking,
+                        _method: 'PUT',
+                        parking_lot_id: parkingLot,
+                        parking_id: parking,
                         user_id: user
                     }, "POST");
                 } else {
                     alert('Parking Lot doesn\'t match')
                 }
-
-
             });
         })
 

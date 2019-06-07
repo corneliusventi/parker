@@ -16,7 +16,6 @@ Route::group(['middleware' => ['guest']], function () {
     Route::get('/', function () {
         return view('pages.welcome');
     });
-
 });
 
 Auth::routes();
@@ -31,7 +30,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::resource('bookings', 'BookingController')->only(['index']);
 
-    Route::resource('parking', 'ParkingController')->only(['index', 'store']);
+    Route::get('parking', 'ParkingController@parking')->name('parking.index');
+    Route::post('parking', 'ParkingController@park')->name('parking.park');
+    Route::put('parking', 'ParkingController@leave')->name('parking.leave');
+
+    Route::resource('parkings', 'ParkingController')->only(['index']);
 
     Route::get('/topup', 'TopUpController@index')->name('topup');
     Route::put('/topup', 'TopUpController@update')->name('topup.update');
@@ -49,7 +52,4 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('slots/code', 'SlotController@code')->name('slots.code');
     Route::get('slots/{slot}/print', 'SlotController@print')->name('slots.print');
     Route::resource('slots', 'SlotController')->only(['index', 'create', 'store']);
-
-
-
 });

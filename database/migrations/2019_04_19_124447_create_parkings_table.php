@@ -20,12 +20,16 @@ class CreateParkingsTable extends Migration
             $table->time('time_end');
             $table->boolean('status')->default(true);
             $table->unsignedInteger('user_id');
+            $table->unsignedInteger('car_id');
+            $table->unsignedInteger('parking_lot_id');
             $table->unsignedInteger('slot_id');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
             $table->foreign('slot_id')->references('id')->on('slots')->onDelete('cascade');
+            $table->foreign('parking_lot_id')->references('id')->on('parking_lots')->onDelete('cascade');
         });
     }
 

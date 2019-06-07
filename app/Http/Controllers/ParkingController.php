@@ -9,94 +9,67 @@ use App\ParkingLot;
 
 class ParkingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function __construct()
     {
-        $bookings = auth()->user()->bookings->filter(function ($booking) {
-            return $booking->status == true;
+        $this->middleware('can:parking');
+
+        $this->middleware(function ($request, $next) {
+            $bookings = auth()->user()->bookings->where('status', true);
+            $booking = $bookings->first();
+            $parkings = auth()->user()->parkings->where('status', true);
+            $parking = $parkings->first();
+
+            if ($parking) {
+                return $next($request);
+            } else if (!$booking) {
+                return redirect()->route('booking.index')->withStatus('Booking First');
+            }
+
+            return $next($request);
         });
-        return view('pages.parking', compact('bookings'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function parking()
     {
-        //
+        $parkings = auth()->user()->parkings->where('status', true);
+        $parking = $parkings->first();
+
+        if ($parking) {
+
+            return view('pages.leaving', compact('parking'));
+        } else {
+            $bookings = auth()->user()->bookings->where('status', true);
+            $booking = $bookings->first();
+
+            return view('pages.parking', compact('booking'));
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function park(Request $request)
     {
         $booking = Booking::findOrFail($request->booking_id);
-        $parking_lot = ParkingLot::findOrFail($request->parking_lot_id);
 
         $booking->status = false;
         $booking->save();
-        $parking_lot->parkings()->create([
+        Parking::create([
             'date' => today(),
             'time_start' => now(),
             'time_end' => now()->addHour($booking->hour),
             'user_id' => auth()->id(),
+            'car_id' => $booking->car_id,
+            'slot_id' => $booking->slot_id,
+            'parking_lot_id' => $booking->parking_lot_id,
         ]);
 
         return redirect()->route('parking.index')->withStatus('Parking Successful');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Parking  $parking
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Parking $parking)
+    public function leave(Request $request)
     {
-        //
-    }
+        $parking = Parking::findOrFail($request->parking_id);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Parking  $parking
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Parking $parking)
-    {
-        //
-    }
+        $parking->status = false;
+        $parking->save();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Parking  $parking
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Parking $parking)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Parking  $parking
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Parking $parking)
-    {
-        //
+        return redirect()->route('booking.index')->withStatus('Parking Successful');
     }
 }

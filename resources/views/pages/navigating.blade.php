@@ -16,10 +16,12 @@
             <th>Code</th>
             <td>{{ $booking->slot->code }}</td>
         </tr>
-        <tr>
-            <th>Level</th>
-            <td>{{ $booking->slot->level }}</td>
-        </tr>
+        @if ($booking->parkingLot->type == 'building')
+            <tr>
+                <th>Level</th>
+                <td>{{ $booking->slot->level }}</td>
+            </tr>
+        @endif
     </table>
     <div class="mb-4">
         {!! $map['html'] !!}
