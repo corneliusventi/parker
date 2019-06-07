@@ -24,4 +24,8 @@ class Parking extends Model
     {
         return $this->belongsTo('App\User');
     }
+    public function car()
+    {
+        return $this->belongsTo('App\Car');
+    }
 }

@@ -47,6 +47,16 @@
                 <a href="{{ route('top-ups.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="dollar-sign"></i> Top Ups</a>
             </div>
         @endcan
+        @can('manage', \App\Booking::class)
+            <div class="col-4 col-md-12 order-7 order-md-8">
+                <a href="{{ route('bookings.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="book-open"></i> Bookings</a>
+            </div>
+        @endcan
+        @can('manage', \App\Parking::class)
+            <div class="col-4 col-md-12 order-7 order-md-8">
+                <a href="{{ route('parkings.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="map-pin"></i> Parkings</a>
+            </div>
+        @endcan
         @can('booking')
             <div class="col-4 col-md-12 order-8 order-md-9">
                 <a href="{{ route('booking.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="book-open"></i> Booking</a>

@@ -6,12 +6,14 @@ use App\Parking;
 use Illuminate\Http\Request;
 use App\Booking;
 use App\ParkingLot;
+use Freshbitsweb\Laratables\Laratables;
 
 class ParkingController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:parking');
+        $this->middleware('can:parking')->only(['parking', 'park', 'leave']);
+        $this->middleware('can:manage,App\Parking')->only(['index']);
 
         $this->middleware(function ($request, $next) {
             $bookings = auth()->user()->bookings->where('status', true);
@@ -26,7 +28,7 @@ class ParkingController extends Controller
             }
 
             return $next($request);
-        });
+        })->only(['parking', 'park', 'leave']);
     }
     public function parking()
     {
@@ -71,5 +73,24 @@ class ParkingController extends Controller
         $parking->save();
 
         return redirect()->route('booking.index')->withStatus('Parking Successful');
+    }
+
+    public function index(Request $request)
+    {
+        $this->authorize('read', Parking::class);
+
+        if ($request->ajax()) {
+            return Laratables::recordsOf(Parking::class, function ($query) {
+                if (auth()->user()->parkingLot) {
+                    return $query->whereHas('parkingLot', function ($query) {
+                        $query->where('id', auth()->user()->parkingLot->id);
+                    });
+                } else {
+                    return $query;
+                }
+            });
+        } else {
+            return view('pages.parkings.index');
+        }
     }
 }

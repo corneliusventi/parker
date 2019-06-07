@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Freshbitsweb\Laratables\Laratables;
 
 class BookingController extends Controller
 {
@@ -14,7 +15,8 @@ class BookingController extends Controller
     public function __construct()
     {
 
-        $this->middleware('can:booking');
+        $this->middleware('can:booking')->only(['booking', 'book', 'cancel']);
+        $this->middleware('can:manage,App\Booking')->only(['index']);
 
         $this->middleware(function ($request, $next) {
             $parkings = auth()->user()->parkings->where('status', true);
@@ -24,7 +26,7 @@ class BookingController extends Controller
             }
 
             return $next($request);
-        });
+        })->only(['bookings', 'book', 'cancel']);
     }
 
     public function booking()
@@ -110,5 +112,25 @@ class BookingController extends Controller
 
         $booking->delete();
         return redirect()->route('booking.index')->withStatus('Delete Booking Successful');
+    }
+
+    public function index(Request $request)
+    {
+        $this->authorize('read', Booking::class);
+
+        if ($request->ajax()) {
+            return Laratables::recordsOf(Booking::class, function ($query) {
+                if(auth()->user()->parkingLot) {
+                    return $query->whereHas('parkingLot', function ($query)
+                    {
+                        $query->where('id', auth()->user()->parkingLot->id);
+                    });
+                } else {
+                    return $query;
+                }
+            });
+        } else {
+            return view('pages.bookings.index');
+        }
     }
 }
