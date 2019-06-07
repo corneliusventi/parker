@@ -36,8 +36,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::resource('parkings', 'ParkingController')->only(['index']);
 
-    Route::get('/topup', 'TopUpController@index')->name('topup');
-    Route::put('/topup', 'TopUpController@update')->name('topup.update');
+    Route::get('/top-up', 'TopUpController@topUp')->name('top-up.index');
+    Route::post('/top-up', 'TopUpController@topUpping')->name('top-up.top-upping');
+    Route::post('/top-up/upload', 'TopUpController@upload')->name('top-up.upload');
+
+    Route::get( 'top-ups/{top_up}/receipt-transfer', 'TopUpController@receiptTransfer')->name( 'top-ups.receipt-transfer');
+    Route::put('top-ups/{top_up}/approve', 'TopUpController@approve')->name('top-ups.approve');
+    Route::put('top-ups/{top_up}/disapprove', 'TopUpController@disapprove')->name('top-ups.disapprove');
+    Route::resource('top-ups', 'TopUpController')->only(['index', 'show']);
 
     Route::get('/profile', 'ProfileController@index')->name('profile');
     Route::put('/profile', 'ProfileController@update')->name('profile.update');

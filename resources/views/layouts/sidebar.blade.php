@@ -42,6 +42,11 @@
                 <a href="{{ route('cars.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="truck"></i> Cars</a>
             </div>
         @endcan
+        @can('manage', \App\TopUp::class)
+            <div class="col-4 col-md-12 order-7 order-md-8">
+                <a href="{{ route('top-ups.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="dollar-sign"></i> Top Ups</a>
+            </div>
+        @endcan
         @can('booking')
             <div class="col-4 col-md-12 order-8 order-md-9">
                 <a href="{{ route('booking.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="book-open"></i> Booking</a>
@@ -54,7 +59,7 @@
         @endcan
         @can('topup')
             <div class="col-4 col-md-12 order-10 order-md-11">
-                <a href="{{ route('topup') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="dollar-sign"></i> Top Up</a>
+                <a href="{{ route('top-up.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="dollar-sign"></i> Top Up</a>
             </div>
         @endcan
         @can('change-profile')

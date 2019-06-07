@@ -3,87 +3,111 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\TopUp;
+use Freshbitsweb\Laratables\Laratables;
 
 class TopUpController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function __construct()
     {
-        return view('pages.topup');
+        $this->middleware('can:topup')->only(['topUp', 'toUppping', 'upload']);
+        $this->middleware('can:manage,App\TopUp')->only(['index', 'receiptTransfer', 'approve', 'disapprove']);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function topUp()
     {
-        //
+        $topUps = auth()->user()->topUps->filter(function ($topUp) {
+            return is_null($topUp->approved);
+        });
+
+        $topUp = $topUps->first();
+
+        if (!$topUp) {
+            $mode = 'top-up';
+            return view('pages.top-up', compact('mode'));
+        } else if (is_null($topUp->receipt_transfer)) {
+            $mode = 'transfer';
+            return view('pages.top-up', compact('mode', 'topUp'));
+        } else if (is_null($topUp->approved)) {
+            $mode = 'success';
+            return view('pages.top-up', compact('mode', 'topUp'));
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function topUpping(Request $request)
     {
-        //
+        TopUp::create([
+            'bank_name'           => $request->input('bank_name'),
+            'bank_account_number' => $request->input('bank_account_number'),
+            'bank_account_name'   => $request->input('bank_account_name'),
+            'amount'              => $request->input('amount'),
+            'user_id'             => auth()->id(),
+        ]);
+
+        return redirect()->route('top-up.index')->withStatus('Top Up Wallet Successful');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function upload(Request $request)
     {
-        //
+        $topUps = auth()->user()->topUps->filter(function ($topUp) {
+            return is_null($topUp->approved);
+        });
+
+        $topUp = $topUps->first();
+
+        if ($topUp) {
+            $topUp->update([
+                'receipt_transfer' => $request->file('receipt_transfer')->store('receipt_transfers')
+            ]);
+            return redirect()->route('top-up.index')->withStatus('Top Up Successful');
+        } else {
+            return redirect()->route('top-up.index')->withStatus('Top Up First');
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function index(Request $request)
     {
-        //
+        $this->authorize('read', TopUp::class);
+
+        if ($request->ajax()) {
+            return Laratables::recordsOf(TopUp::class, function ($query) {
+                return $query->orderBy('created_at', 'desc');
+            });
+        } else {
+            return view('pages.top-ups.index');
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request)
+    public function show(Request $request, TopUp $topUp)
     {
-        $user = auth()->user();
+        return view('pages.top-ups.show', compact('topUp'));
+    }
 
-        $user->wallet += $request->saldo;
+    public function receiptTransfer(Request $request, TopUp $topUp)
+    {
+        return response()->file(storage_path('/app//' . $topUp->receipt_transfer));
+    }
+
+    public function approve(Request $request, TopUp $topUp)
+    {
+        $topUp->update([
+            'approved' => true,
+        ]);
+
+        $user = $topUp->user;
+        $user->wallet += $topUp->amount;
         $user->save();
 
-        return redirect()->route('topup')->withStatus('Top Up Wallet Successful');
+        return redirect()->route('top-ups.index')->withStatus('Approval Top Up Successful');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function disapprove(Request $request, TopUp $topUp)
     {
-        //
+        $topUp->update([
+            'approved' => false,
+        ]);
+
+        return redirect()->route('top-ups.index')->withStatus('Disapproval Top Up Successful');
     }
 }

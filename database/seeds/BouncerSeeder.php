@@ -8,6 +8,7 @@ use App\Booking;
 use App\Parking;
 use App\Slot;
 use App\Car;
+use App\TopUp;
 
 class BouncerSeeder extends Seeder
 {
@@ -23,6 +24,7 @@ class BouncerSeeder extends Seeder
         Bouncer::allow('administrator')->toManage(ParkingLot::class);
         Bouncer::allow('administrator')->toManage(Booking::class);
         Bouncer::allow('administrator')->toManage(Parking::class);
+        Bouncer::allow('administrator')->toManage(TopUp::class);
         Bouncer::allow('administrator')->to('change-profile');
         Bouncer::allow('operator')->toManage(Slot::class);
         Bouncer::allow('operator')->toManage(Parking::class);

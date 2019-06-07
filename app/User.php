@@ -36,6 +36,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Car');
     }
 
+    public function topUps()
+    {
+        return $this->hasMany('App\TopUp');
+    }
+
     public function bookings()
     {
         return $this->hasMany('App\Booking');
@@ -48,7 +53,7 @@ class User extends Authenticatable
 
     public function getAvatarAttribute()
     {
-        return $this->photo ? 'data:image/png;base64,'.$this->photo : Avatar::create($this->fullname)->toBase64();
+        return $this->photo ? 'data:image/png;base64,' . $this->photo : Avatar::create($this->fullname)->toBase64();
     }
 
     public static function laratablesCustomRole($user)

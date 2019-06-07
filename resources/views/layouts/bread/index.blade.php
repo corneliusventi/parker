@@ -4,9 +4,11 @@
 
 @section('button')
 
-    @link(['url' => $create])
-        Create
-    @endlink
+    @isset($create)
+        @link(['url' => $create])
+            Create
+        @endlink
+    @endisset
 
 @endsection
 
