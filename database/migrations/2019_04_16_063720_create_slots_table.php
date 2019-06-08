@@ -15,10 +15,9 @@ class CreateSlotsTable extends Migration
     {
         Schema::create('slots', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('level')->nullable();
             $table->string('code');
+            $table->integer('level')->nullable();
             $table->longText('qrcode');
-            $table->boolean('active')->default(true);
             $table->unsignedInteger('parking_lot_id');
             $table->timestamps();
             $table->softDeletes();

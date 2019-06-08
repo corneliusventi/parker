@@ -13,22 +13,32 @@ class ParkingLot extends Model
     use SoftCascadeTrait;
     use Geographical;
 
-    protected $fillable = ['name', 'address', 'type', 'latitude', 'longitude'];
+    protected $fillable = ['name', 'address', 'type', 'latitude', 'longitude', 'user_id'];
     protected $softCascade = ['slots'];
     protected static $kilometers = true;
-    
+
     public function slots()
     {
         return $this->hasMany('App\Slot');
     }
 
-    public static function laratablesCustomAction($parkingLot)
+    public function user()
     {
-        return view('pages.parking-lot.action', compact('parkingLot'))->render();
+        return $this->belongsTo('App\User');
     }
 
     public function laratablesType()
     {
         return ucwords($this->type);
+    }
+
+    public function getOptionValueAttribute()
+    {
+        return $this->id;
+    }
+
+    public function getOptionTextAttribute()
+    {
+        return $this->name;
     }
 }

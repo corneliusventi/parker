@@ -29,12 +29,32 @@
         @endcan
         @can('manage', \App\ParkingLot::class)
             <div class="col-4 col-md-12 order-6 order-md-7">
-                <a href="{{ route('parking-lot.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="flag"></i>Parking Lots</a>
+                <a href="{{ route('parking-lots.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="flag"></i> Parking Lots</a>
+            </div>
+        @endcan
+        @can('manage', \App\Slot::class)
+            <div class="col-4 col-md-12 order-7 order-md-8">
+                <a href="{{ route('slots.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="grid"></i> Slots</a>
             </div>
         @endcan
         @can('manage', \App\Car::class)
             <div class="col-4 col-md-12 order-7 order-md-8">
-                <a href="{{ route('cars.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="truck"></i>Cars</a>
+                <a href="{{ route('cars.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="truck"></i> Cars</a>
+            </div>
+        @endcan
+        @can('manage', \App\TopUp::class)
+            <div class="col-4 col-md-12 order-7 order-md-8">
+                <a href="{{ route('top-ups.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="dollar-sign"></i> Top Ups</a>
+            </div>
+        @endcan
+        @can('manage', \App\Booking::class)
+            <div class="col-4 col-md-12 order-7 order-md-8">
+                <a href="{{ route('bookings.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="book-open"></i> Bookings</a>
+            </div>
+        @endcan
+        @can('manage', \App\Parking::class)
+            <div class="col-4 col-md-12 order-7 order-md-8">
+                <a href="{{ route('parkings.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="map-pin"></i> Parkings</a>
             </div>
         @endcan
         @can('booking')
@@ -49,7 +69,7 @@
         @endcan
         @can('topup')
             <div class="col-4 col-md-12 order-10 order-md-11">
-                <a href="{{ route('topup') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="dollar-sign"></i> Top Up</a>
+                <a href="{{ route('top-up.index') }}" class="btn btn-primary text-md-left pl-md-5 btn-big btn-block"><i data-feather="dollar-sign"></i> Top Up</a>
             </div>
         @endcan
         @can('change-profile')

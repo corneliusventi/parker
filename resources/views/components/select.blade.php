@@ -11,12 +11,22 @@
         {{ isset($readonly) ? 'readonly' : '' }}
         >
         @foreach ($options as $option)
-            <option
-                value="{{ $option->option_value }}"
-                {{ isset($selected) && $option->is($selected) ? 'selected' : '' }}
-                >
-                {{ $option->option_text }}
-            </option>
+
+            @if (is_array($option))
+                <option
+                    value="{{ $option['value'] }}"
+                    {{ isset($selected) && $option['value'] == $selected ? 'selected' : '' }}
+                    >
+                    {{ $option['text'] }}
+                </option>
+            @else
+                <option
+                    value="{{ $option->option_value }}"
+                    {{ isset($selected) && $option->is($selected) ? 'selected' : '' }}
+                    >
+                    {{ $option->option_text }}
+                </option>
+            @endif
         @endforeach
     </select>
 

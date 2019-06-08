@@ -5,57 +5,83 @@ namespace App\Http\Controllers;
 use App\Booking;
 use Illuminate\Http\Request;
 use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
-use App\ParkingLot;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Freshbitsweb\Laratables\Laratables;
 
 class BookingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $config = array();
-        $config['center'] = '-0.03109, 109.32199'; //Pontianak
-        $config['zoom'] = 15;
-        $config['geometry'] = true;
-        $config['onclick'] = 'mapOnClick(event)';
-        GMaps::initialize($config);
 
-        $map = GMaps::create_map();
-        $map['js'] = Str::replaceFirst('&v=3', '&v=3&libraries=geometry', $map['js']);
-        return view('pages.booking', compact('map'));
+    public function __construct()
+    {
+
+        $this->middleware('can:booking')->only(['booking', 'book', 'cancel']);
+        $this->middleware('can:manage,App\Booking')->only(['index']);
+
+        $this->middleware(function ($request, $next) {
+            $parkings = auth()->user()->parkings->where('status', true);
+            $parking = $parkings->first();
+            if ($parking) {
+                return redirect()->route('parking.index')->withStatus('Already Booking');
+            }
+
+            return $next($request);
+        })->only(['bookings', 'book', 'cancel']);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function booking()
     {
-        //
+        $bookings = auth()->user()->bookings->where('status', true);
+
+        if ($bookings->count() > 0) {
+            $booking = $bookings->first();
+
+            $config = array();
+            $config['center'] = '-0.03109, 109.32199'; //Pontianak
+            $config['zoom'] = 15;
+            $config['geometry'] = true;
+            $config['trafficOverlay'] = true;
+            $config['onclick'] = 'mapOnClick(event)';
+            $config['directions'] = true;
+            $config['directionsStart'] = 'auto';
+            $config['directionsEnd'] = $booking->parkingLot->latitude . ', ' . $booking->parkingLot->longitude;
+            GMaps::initialize($config);
+
+            $marker = array();
+            $marker['position'] = $booking->parkingLot->latitude . ', ' . $booking->parkingLot->longitude;
+            $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=14ACBC&color=FFF&hoffset=-1';
+            Gmaps::add_marker($marker);
+
+            $map = GMaps::create_map();
+
+            return view('pages.navigating', compact('booking', 'map'));
+        } else {
+            $cars = auth()->user()->cars;
+
+            $config = array();
+            $config['center'] = '-0.03109, 109.32199'; //Pontianak
+            $config['zoom'] = 15;
+            $config['geometry'] = true;
+            $config['onclick'] = 'mapOnClick(event)';
+            GMaps::initialize($config);
+
+            $map = GMaps::create_map();
+            $map['js'] = Str::replaceFirst('&v=3', '&v=3&libraries=geometry', $map['js']);
+            return view('pages.booking', compact('map', 'cars'));
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function book(Request $request)
     {
         if (auth()->user()->wallet >= 10000) {
-            $parkingLot = ParkingLot::find($request->parking_lot_id);
-            $parkingLot->bookings()->create([
-                'type' => $request->type,
-                'hour' => (int)$request->hour,
-                'time' => $request->time ?? now(),
-                'date' => $request->date ?? today(),
+            Booking::create([
+                'hour' => (int)$request->input('hour'),
+                'time' => now(),
+                'date' => today(),
                 'user_id' => auth()->id(),
+                'car_id' => $request->input('car'),
+                'slot_id' => $request->input('slot'),
+                'parking_lot_id' => $request->input('parking_lot'),
             ]);
 
             $bookingPrice = 5000;
@@ -68,71 +94,43 @@ class BookingController extends Controller
         } else {
             return redirect()->route('booking.index')->withStatus('Minimum Saldo Rp. 10.000');
         }
-
-
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Booking  $booking
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Booking $booking)
+    public function cancel()
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Booking  $booking
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Booking $booking)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Booking  $booking
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Booking $booking)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Booking  $booking
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Booking $booking)
-    {
+        $booking = auth()->user()->bookings->where('status', true)->first();
         $bookingPrice = 5000;
         $parkingPrice = 1000;
 
         $user = auth()->user();
-        if ($booking->type == 'later') {
-            if (now()->lte(Carbon::createFromTimeString($booking->time)->subMinute(30))) {
-                $user->update([
-                    'wallet' => $user->wallet + ($parkingPrice * $booking->hour)
-                ]);
-            }
-        } else if ($booking->type == 'now') {
-            if (Carbon::createFromTimeString($booking->time)->lte(now()->addMinute(30))) {
-                $user->update([
-                    'wallet' => $user->wallet + ($parkingPrice * $booking->hour)
-                ]);
-            }
+
+        if (Carbon::createFromTimeString($booking->time)->lte(now()->addMinute(30))) {
+            $user->update([
+                'wallet' => $user->wallet + ($parkingPrice * $booking->hour)
+            ]);
         }
 
         $booking->delete();
-        return redirect()->route('parking.index')->withStatus('Delete Booking Successful');
+        return redirect()->route('booking.index')->withStatus('Delete Booking Successful');
+    }
+
+    public function index(Request $request)
+    {
+        $this->authorize('read', Booking::class);
+
+        if ($request->ajax()) {
+            return Laratables::recordsOf(Booking::class, function ($query) {
+                if(auth()->user()->parkingLot) {
+                    return $query->whereHas('parkingLot', function ($query)
+                    {
+                        $query->where('id', auth()->user()->parkingLot->id);
+                    });
+                } else {
+                    return $query;
+                }
+            });
+        } else {
+            return view('pages.bookings.index');
+        }
     }
 }

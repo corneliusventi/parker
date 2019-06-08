@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateParkingLotsTable extends Migration
+class CreateTopUpsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateParkingLotsTable extends Migration
      */
     public function up()
     {
-        Schema::create('parking_lots', function (Blueprint $table) {
+        Schema::create('top_ups', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->text('address');
-            $table->enum('type', ['street', 'building']);
-            $table->double('latitude');
-            $table->double('longitude');
+            $table->string('bank_account_number');
+            $table->string('bank_account_name');
+            $table->string('bank_name');
+            $table->integer('amount');
+            $table->boolean('approved')->nullable();
+            $table->text('receipt_transfer')->nullable();
             $table->unsignedInteger('user_id');
             $table->timestamps();
             $table->softDeletes();
@@ -35,6 +36,6 @@ class CreateParkingLotsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('parking_lots');
+        Schema::dropIfExists('top_ups');
     }
 }

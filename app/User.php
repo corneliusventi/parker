@@ -36,26 +36,43 @@ class User extends Authenticatable
         return $this->hasMany('App\Car');
     }
 
+    public function topUps()
+    {
+        return $this->hasMany('App\TopUp');
+    }
+
     public function bookings()
     {
         return $this->hasMany('App\Booking');
     }
+
     public function parkings()
     {
         return $this->hasMany('App\Parking');
     }
+
     public function getAvatarAttribute()
     {
-        return $this->photo ? 'data:image/png;base64,'.$this->photo : Avatar::create($this->fullname)->toBase64();
-    }
-
-    public static function laratablesCustomAction($user)
-    {
-        return view('pages.users.action', compact('user'))->render();
+        return $this->photo ? 'data:image/png;base64,' . $this->photo : Avatar::create($this->fullname)->toBase64();
     }
 
     public static function laratablesCustomRole($user)
     {
         return $user->roles->first()->title;
+    }
+
+    public function getOptionValueAttribute()
+    {
+        return $this->id;
+    }
+
+    public function getOptionTextAttribute()
+    {
+        return $this->fullname;
+    }
+
+    public function parkingLot()
+    {
+        return $this->hasOne('App\ParkingLot');
     }
 }
