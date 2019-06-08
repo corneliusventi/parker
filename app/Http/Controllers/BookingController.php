@@ -73,7 +73,12 @@ class BookingController extends Controller
 
     public function book(Request $request)
     {
-        if (auth()->user()->wallet >= 10000) {
+        $bookingPrice = 5000;
+        $parkingPrice = 1000;
+
+        $price = $bookingPrice + ($parkingPrice * $request->hour);
+
+        if (auth()->user()->wallet >= 10000 && auth()->user()->wallet >= $price) {
             Booking::create([
                 'hour' => (int)$request->input('hour'),
                 'time' => now(),
@@ -84,15 +89,12 @@ class BookingController extends Controller
                 'parking_lot_id' => $request->input('parking_lot'),
             ]);
 
-            $bookingPrice = 5000;
-            $parkingPrice = 1000;
-
             auth()->user()->update([
-                'wallet' => auth()->user()->wallet - ($bookingPrice + ($parkingPrice * $request->hour))
+                'wallet' => auth()->user()->wallet - $price
             ]);
             return redirect()->route('booking.index')->withStatus('Booking Successful');
         } else {
-            return redirect()->route('booking.index')->withStatus('Minimum Saldo Rp. 10.000');
+            return redirect()->route('booking.index')->withStatus('Minimum Saldo Rp. 10.000 And Saldo doesn\'t enough');
         }
     }
 
