@@ -13,10 +13,10 @@
             <h4 class="pt-1">{{ auth()->user()->fullname }}</h4>
         </div>
         <div class="col-12 col-md-12 order-13 order-md-4">
-            @if (auth()->user()->isA('superadministrator') || auth()->user()->isAn('administrator'))
-                <h6 class="mb-4">{{ auth()->user()->getRoles()->first() }}</h6>
-            @else
+            @if (auth()->user()->isA('user'))
                 <h6 class="mb-4">Rp. {{ number_format(auth()->user()->wallet) }}</h6>
+            @else
+                <h6 class="mb-4">{{ auth()->user()->getRoles()->first() }}</h6>
             @endif
         </div>
         <div class="col-4 col-md-12 order-4 order-md-5">
