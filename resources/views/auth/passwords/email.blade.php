@@ -11,12 +11,24 @@
         <div class="col-md-6 d-flex flex-column p-4 justify-content-center align-items-center">
             <div class="w-75">
                 <h1 class="display-4 text-primary text-center pb-4">Forgot Password</h1>
-
-                <form action="#" method="post">
+                @if (session('status'))
+                <div class="alert alert-success" role="alert">
+                    {{ session('status') }}
+                </div>
+                @endif
+                <form action="{{ route('password.email') }}" method="post">
+                    @csrf
                     <div class="form-group">
-                        <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+                        @if($errors->first('email'))
+                        <small class="form-text text-danger">
+                            {{ $errors->first('email') }}
+                        </small>
+                        @endif
                     </div>
-                    <button type="submit" name="reset" id="reset" class="btn btn-primary btn-block rounded">Reset Password</button>
+                    <button type="submit" name="reset" id="reset" class="btn btn-primary btn-block rounded">
+                        Send Password Reset Link
+                    </button>
                 </form>
 
                 <div class="mb-4 mt-4 text-center">
@@ -29,26 +41,31 @@
 @endsection
 
 @push('css')
-    <style>
-        body, html, .container-fluid, .d-flex {
-            height: 100%;
-        }
-        .background {
-            position: relative;
-        }
-        .background::after {
-            content: "";
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            z-index: -1;
-            position: absolute;
-            background-image: url('/image/parking-lot.png');
-            background-position: center;
-            background-size: 90%;
-            opacity: 0.15;
-            background-repeat: no-repeat;
-        }
-    </style>
+<style>
+    body,
+    html,
+    .container-fluid,
+    .d-flex {
+        height: 100%;
+    }
+
+    .background {
+        position: relative;
+    }
+
+    .background::after {
+        content: "";
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: -1;
+        position: absolute;
+        background-image: url('/image/parking-lot.png');
+        background-position: center;
+        background-size: 90%;
+        opacity: 0.15;
+        background-repeat: no-repeat;
+    }
+</style>
 @endpush

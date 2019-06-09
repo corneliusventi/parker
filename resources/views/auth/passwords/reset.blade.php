@@ -1,40 +1,29 @@
 @extends('layouts.html')
 
-@section('title', 'Register')
+@section('title', 'Reset Password')
 
 @section('body')
 <div class="container-fluid">
     <div class="d-flex flex-row">
-        <div class="background col-md-6 d-md-flex p-4 justify-content-center align-items-center d-none">
+        <div class="background col-md-6 d-none d-md-flex p-4 justify-content-center align-items-center">
             <img src="/image/logo.png" class="img-fluid" alt="logo parker" width="500">
         </div>
         <div class="col-md-6 d-flex flex-column p-4 justify-content-center align-items-center">
             <div class="w-75">
-                <h1 class="display-4 text-primary text-center pb-4">Register</h1>
-
-                <form action="{{ route('register') }}" method="POST">
+                <h1 class="display-4 text-primary text-center pb-4">Forgot Password</h1>
+                @if (session('status'))
+                <div class="alert alert-success" role="alert">
+                    {{ session('status') }}
+                </div>
+                @endif
+                <form action="{{ route('password.update') }}" method="post">
                     @csrf
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="fullname" id="fullname" placeholder="Fullname"
-                            value="{{ old('fullname') }}">
-                        @if($errors->first('fullname'))
-                        <small class="form-text text-danger">
-                            {{ $errors->first('fullname') }}
-                        </small>
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="username" id="username" placeholder="Username"
-                            value="{{ old('username') }}">
-                        @if($errors->first('username'))
-                        <small class="form-text text-danger">
-                            {{ $errors->first('username') }}
-                        </small>
-                        @endif
-                    </div>
+
+                    <input type="hidden" name="token" value="{{ $token }}">
+
                     <div class="form-group">
                         <input type="email" class="form-control" name="email" id="email" placeholder="Email"
-                            value="{{ old('email') }}">
+                            value="{{ $email ?? old('email') }}" required autofocus>
                         @if($errors->first('email'))
                         <small class="form-text text-danger">
                             {{ $errors->first('email') }}
@@ -42,8 +31,8 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control" name="password" id="password"
-                            placeholder="Password">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Password"
+                            required>
                         @if($errors->first('password'))
                         <small class="form-text text-danger">
                             {{ $errors->first('password') }}
@@ -52,15 +41,11 @@
                     </div>
                     <div class="form-group">
                         <input type="password" class="form-control" name="password_confirmation"
-                            id="password_confirmation" placeholder="Password Confirmation">
+                            id="password_confirmation" placeholder="Password" required>
                     </div>
-                    <button type="submit" name="login" id="login"
-                        class="btn btn-primary btn-block rounded">Register</button>
+                    <button type="submit" name="reset" id="reset" class="btn btn-primary btn-block rounded">Reset
+                        Password</button>
                 </form>
-
-                <div class="mb-4 mt-4 text-center">
-                    Already registered? <a href="{{ route('login') }}">Login</a>
-                </div>
             </div>
         </div>
     </div>

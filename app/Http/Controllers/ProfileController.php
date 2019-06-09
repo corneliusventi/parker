@@ -22,7 +22,7 @@ class ProfileController extends Controller
             'fullname' => ['required', 'string', 'max:255'],
             'username' => ['required', 'alpha_dash', 'max:255', 'unique:users,username,' . $user->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'new_password' => ['nullable', 'string', 'min:6', 'confirmed'],
+            'new_password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
         $user->update([

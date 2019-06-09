@@ -15,15 +15,27 @@
                 <form action="{{ route('login') }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <input type="text" class="form-control" name="username" id="username" placeholder="Username">
+                        <input type="text" class="form-control" name="username" id="username" placeholder="Username"
+                            required>
+                        @if($errors->first('username'))
+                        <small class="form-text text-danger">
+                            {{ $errors->first('username') }}
+                        </small>
+                        @endif
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Password"
+                            required>
+                        @if($errors->first('password'))
+                        <small class="form-text text-danger">
+                            {{ $errors->first('password') }}
+                        </small>
+                        @endif
                     </div>
-                    <button type="submit" name="login" id="login" class="btn btn-primary btn-block rounded">Login</button>
+                    <button type="submit" name="login" id="login"
+                        class="btn btn-primary btn-block rounded">Login</button>
                     <div class="mb-4 mt-4 text-center">
-                        <a href="#">Forgot your password?</a>
-                        {{-- <a href="{{ route('password.request') }}">Forgot your password?</a> --}}
+                        <a href="{{ route('password.request') }}">Forgot your password?</a>
                     </div>
                 </form>
 
@@ -37,26 +49,31 @@
 @endsection
 
 @push('css')
-    <style>
-        body, html, .container-fluid, .d-flex {
-            height: 100%;
-        }
-        .background {
-            position: relative;
-        }
-        .background::after {
-            content: "";
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            z-index: -1;
-            position: absolute;
-            background-image: url('/image/parking-lot.png');
-            background-position: center;
-            background-size: 90%;
-            opacity: 0.15;
-            background-repeat: no-repeat;
-        }
-    </style>
+<style>
+    body,
+    html,
+    .container-fluid,
+    .d-flex {
+        height: 100%;
+    }
+
+    .background {
+        position: relative;
+    }
+
+    .background::after {
+        content: "";
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: -1;
+        position: absolute;
+        background-image: url('/image/parking-lot.png');
+        background-position: center;
+        background-size: 90%;
+        opacity: 0.15;
+        background-repeat: no-repeat;
+    }
+</style>
 @endpush
