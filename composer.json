@@ -19,6 +19,7 @@
         "laravel/tinker": "^1.0",
         "laravolt/avatar": "^2.2",
         "malhal/laravel-geographical": "^1.0",
+        "s-ichikawa/laravel-sendgrid-driver": "^2.0",
         "silber/bouncer": "v1.0.0-rc.5",
         "simplesoftwareio/simple-qrcode": "^2.0"
     },
