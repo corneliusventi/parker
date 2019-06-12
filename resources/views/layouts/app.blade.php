@@ -3,7 +3,7 @@
 @section('body')
 <div class="container-fluid my-container">
     <div class="row my-row position-relative">
-        <div id="sidebar" class="col-auto bg-primary p-4 d-md-block position-absolute">
+        <div id="sidebar" class="col-auto bg-primary p-4 d-md-block">
             @include('layouts.sidebar')
         </div>
         <div class="content col p-4">
