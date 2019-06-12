@@ -2,14 +2,15 @@
 
 @section('body')
 <div class="container-fluid my-container">
-    <div class="row my-row">
-        <div class="col-12 col-md-3 col-lg-2 bg-primary p-1">
+    <div class="row my-row position-relative">
+        <div id="sidebar" class="col-auto bg-primary p-4 d-md-block position-absolute">
             @include('layouts.sidebar')
         </div>
-        <div class="content col-12 col-md-9 col-lg-10 p-4">
+        <div class="content col p-4">
             <div class="row">
                 <div class="col">
                     <h1 class="h1 text-primary">
+                        <span id="menu"></span>
                         @yield('title')
                     </h1>
                 </div>
@@ -35,22 +36,66 @@
                 </ul>
             @endif
         </div>
+        <div id="backdrop" class="bg-secondary d-md-none"></div>
     </div>
 </div>
-
 @yield('modal')
 
 @endsection
 
 @push('css')
     <style>
+        html, body, .my-container, .my-row{
+            height: 100%;
+        }
         @media (min-width: 768px) {
-            html, body, .my-container, .my-row{
-                height: 100%;
+            #sidebar {
+                position: relative !important;
+                left: 0% !important;
+                width: auto;
+                height: auto !important;
+                overflow-y: unset;
             }
-            .content {
-                overflow-y: auto;
-            }
+
+        }
+        #sidebar {
+            overflow-y: auto;
+            width: 200px;
+            height: 100%;
+            left: -200px;
+            z-index: 3;
+            position: fixed;
+            transition: all 1s;
+        }
+        #sidebar.active {
+            left: 0px;
+            opacity: 1;
+        }
+        #backdrop {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0.5;
         }
     </style>
+@endpush
+
+@push('js')
+    <script>
+        let menuIcon = feather.icons.menu.toSvg({ class: 'd-md-none' });
+        let menu = $('#menu');
+        let sidebar = $('#sidebar');
+        let backdrop = $('#backdrop');
+        menu.append(menuIcon);
+        menu.click(() => {
+            sidebar.toggleClass('active');
+            backdrop.fadeIn();
+        });
+        backdrop.click(() => {
+            sidebar.toggleClass('active');
+            backdrop.fadeOut();
+        });
+    </script>
 @endpush
