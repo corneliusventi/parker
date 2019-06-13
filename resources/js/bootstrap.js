@@ -8,12 +8,11 @@ window._ = require('lodash')
  */
 
 try {
-  window.Cleave = require('cleave.js')
   window.Popper = require('popper.js').default
   window.$ = window.jQuery = require('jquery')
-
+  window.feather = require('feather-icons')
   require('bootstrap')
-  require('datatables.net-bs4')()
+  require('typeface-nunito')
 } catch (e) { }
 
 /**

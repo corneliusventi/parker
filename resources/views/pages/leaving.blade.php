@@ -65,7 +65,7 @@
 
 @push('js')
     <script type="text/javascript" src="/js/instascan.min.js"></script>
-    <script type="text/javascript" src="https://cdn.rawgit.com/mgalante/jquery.redirect/master/jquery.redirect.js"></script>
+    <script type="text/javascript" src="/js/jquery.redirect.js"></script>
     <script>
         let scanner;
 

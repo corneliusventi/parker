@@ -54,7 +54,12 @@
 
 @endsection
 
+@push('css')
+    <link rel="stylesheet" href="{{ mix('/css/datatable.css') }}">
+@endpush
+
 @push('js')
+    <script src="{{ mix('/js/datatable.js') }}"></script>
     <script>
         $('#table').DataTable({
             serverSide: true,
