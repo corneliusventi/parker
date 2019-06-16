@@ -21,6 +21,10 @@
             'name' => 'role',
             'display_name' => 'Role',
         ],
+        [
+            'name' => 'action',
+            'display_name' => 'Action',
+        ],
     ],
     'ajax' => route('users.index'),
     'create' => route('users.create'),

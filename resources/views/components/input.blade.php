@@ -10,9 +10,9 @@
         placeholder="{{ $placeholder ?? $slot }}"
         value="{{ $value ?? old($name) }}"
         {{ isset($min) && $type == 'number' ? 'min='.$min : '' }}
-        {{ isset($required)  ? 'required' : '' }}
-        {{ isset($disabled) ? 'disabled' : '' }}
-        {{ isset($readonly) ? 'readonly' : '' }}
+        {{ isset($required) && $required ? 'required' : '' }}
+        {{ isset($disabled) && $disabled ? 'disabled' : '' }}
+        {{ isset($readonly) && $readonly ? 'readonly' : '' }}
         >
 
     @if($errors->first($name))

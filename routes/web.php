@@ -49,7 +49,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/profile', 'ProfileController@update')->name('profile.update');
     Route::put('/profile/photo', 'ProfileController@updatePhoto')->name('profile.update.photo');
 
-    Route::resource('users', 'UserController')->only(['index', 'create', 'store']);
+    Route::resource('users', 'UserController');
     Route::resource('cars', 'CarController');
 
     Route::get('parking-lots/available', 'ParkingLotController@available')->name('parking-lots.available');

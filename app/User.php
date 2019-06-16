@@ -75,4 +75,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\ParkingLot');
     }
+
+    public static function laratablesCustomAction($user)
+    {
+        return view('pages.users.action', compact('user'))->render();
+    }
 }
