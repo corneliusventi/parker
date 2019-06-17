@@ -1,7 +1,7 @@
-@extends('layouts.bread.create', [
-    'title' => 'Create Parking Lot',
+@extends('layouts.bread.edit', [
+    'title' => 'Edit Parking Lot',
     'back' => route('parking-lots.index'),
-    'store' => route('parking-lots.store'),
+    'update' => route('parking-lots.update', $parkingLot->id),
 ])
 
 @section('form')
@@ -44,6 +44,10 @@
         function mapOnClick(event) {
             placeMarker(event.latLng);
             updateLatLngInput(event.latLng);
+        }
+
+        function mapOnTilesLoaded() {
+            parkingLotMarker = marker_0;
         }
 
     </script>

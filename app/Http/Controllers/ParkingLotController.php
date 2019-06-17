@@ -3,14 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\ParkingLot;
-use App\Slot;
 use Illuminate\Http\Request;
 use Freshbitsweb\Laratables\Laratables;
 use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
 use DB;
-use PDF;
-use QrCode;
 use App\User;
+use App\Rules\Role;
 
 class ParkingLotController extends Controller
 {
@@ -18,14 +16,10 @@ class ParkingLotController extends Controller
     {
         $this->middleware('can:manage,App\ParkingLot')->except('available');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request)
     {
-        $this->authorize('read', ParkingLot::class);
+        $this->authorize('browse', ParkingLot::class);
 
         if ($request->ajax()) {
             return Laratables::recordsOf(ParkingLot::class);
@@ -34,46 +28,34 @@ class ParkingLotController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        $this->authorize('create', ParkingLot::class);
+        $this->authorize('add', ParkingLot::class);
 
         $config = array();
         $config['center'] = '-0.03109, 109.32199'; //Pontianak
         $config['zoom'] = 15;
         $config['onclick'] = 'mapOnClick(event)';
-        $config['ontilesloaded'] = 'mapOnTilesLoaded()';
         GMaps::initialize($config);
         $map = GMaps::create_map();
 
+        $operators = User::whereIs('operator', 'admin_operator')->doesntHave('parkingLot')->get();
 
-        $operators = User::whereIs('operator')->doesntHave('parkingLot')->get();
-
-        return view('pages.parking-lots.create', compact('map', 'operators'));
+        return view('pages.parking-lots.create', compact('map', 'operators', 'admin_operators'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $this->authorize('store', ParkingLot::class);
+        $this->authorize('add', ParkingLot::class);
 
         $request->validate([
-            'name'      => ['required', 'string', 'max:255'],
-            'address'   => ['required', 'string', 'max:255'],
-            'type'      => ['required', 'in:street,building'],
-            'latitude'  => ['required', 'string', 'max:255'],
-            'longitude' => ['required', 'string', 'max:255'],
-            'operator'  => ['required', 'exists:users,id'],
+            'name'           => ['required', 'string', 'max:255'],
+            'address'        => ['required', 'string', 'max:255'],
+            'type'           => ['required', 'in:street,building'],
+            'latitude'       => ['required', 'string', 'max:255'],
+            'longitude'      => ['required', 'string', 'max:255'],
+            'operators'      => ['required'],
+            'operators.*'    => ['exists:users,id', new Role(['operator', 'admin_operator'])],
         ]);
 
         try {
@@ -85,8 +67,9 @@ class ParkingLotController extends Controller
                 'type'      => $request->type,
                 'latitude'  => $request->latitude,
                 'longitude' => $request->longitude,
-                'user_id'   => $request->operator,
             ]);
+
+            $parkingLot->users()->attach($request->operators);
 
             DB::commit();
         } catch (Exception $e) {
@@ -98,6 +81,110 @@ class ParkingLotController extends Controller
         return redirect()->route('parking-lots.index')->withStatus('Parking Lot has been saved');
     }
 
+    public function show(ParkingLot $parkingLot)
+    {
+        $this->authorize('read', $parkingLot);
+
+        $location = $parkingLot->latitude . ', ' . $parkingLot->longitude;
+
+        $config = array();
+        $config['center'] = $location; //Pontianak
+        $config['zoom'] = 15;
+        $config['disableDefaultUI'] = true;
+        GMaps::initialize($config);
+
+        $marker = array();
+        $marker['position'] = $location;
+        $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=38c172&color=FFF&hoffset=-1';
+        Gmaps::add_marker($marker);
+
+        $map = GMaps::create_map();
+
+        return view('pages.parking-lots.show', compact('parkingLot', 'map'));
+    }
+
+    public function edit(ParkingLot $parkingLot)
+    {
+        $this->authorize('edit', $parkingLot);
+
+        $location = $parkingLot->latitude . ', ' . $parkingLot->longitude;
+
+        $config = array();
+        $config['center'] = $location; //Pontianak
+        $config['zoom'] = 15;
+        $config['onclick'] = 'mapOnClick(event)';
+        $config['ontilesloaded'] = 'mapOnTilesLoaded()';
+        GMaps::initialize($config);
+
+        $marker = array();
+        $marker['position'] = $location;
+        $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=38c172&color=FFF&hoffset=-1';
+        $marker['draggable'] = true;
+        Gmaps::add_marker($marker);
+
+        $map = GMaps::create_map();
+
+        $operators = User::whereIs('operator', 'admin_operator')->doesntHave('parkingLot')->get();
+        $operators = $operators->merge($parkingLot->users);
+
+        return view('pages.parking-lots.edit', compact('parkingLot', 'map', 'operators'));
+    }
+
+    public function update(Request $request, ParkingLot $parkingLot)
+    {
+        $this->authorize('edit', $parkingLot);
+
+        $request->validate([
+            'name'           => ['required', 'string', 'max:255'],
+            'address'        => ['required', 'string', 'max:255'],
+            'type'           => ['required', 'in:street,building'],
+            'latitude'       => ['required', 'string', 'max:255'],
+            'longitude'      => ['required', 'string', 'max:255'],
+            'operators'      => ['required'],
+            'operators.*'    => ['exists:users,id', new Role(['operator', 'admin_operator'])],
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $parkingLot->update([
+                'name'      => $request->name,
+                'address'   => $request->address,
+                'type'      => $request->type,
+                'latitude'  => $request->latitude,
+                'longitude' => $request->longitude,
+            ]);
+
+            $parkingLot->users()->sync($request->operators);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('parking-lots.index')->withStatus('Parking Lot could not been updated');
+        }
+
+        return redirect()->route('parking-lots.index')->withStatus('Parking Lot has been updated');
+    }
+
+    public function destroy(Request $request, ParkingLot $parkingLot)
+    {
+        $this->authorize('delete', $parkingLot);
+
+        try {
+            DB::beginTransaction();
+
+            $parkingLot->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('parking-lots.index')->withStatus('Parking Lot could not been deleted');
+        }
+
+        return redirect()->route('parking-lots.index')->withStatus('Parking Lot has been deleted');
+    }
     public function available(Request $request)
     {
         $latitude    = $request->latitude;

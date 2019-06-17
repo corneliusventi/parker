@@ -6,23 +6,32 @@
         class="custom-select"
         name="{{ $name }}"
         id="{{ $id ?? $name }}"
-        {{ isset($required)  ? 'required' : '' }}
-        {{ isset($disabled) ? 'disabled' : '' }}
-        {{ isset($readonly) ? 'readonly' : '' }}
+        {{ isset($required) && $required ? 'required' : '' }}
+        {{ isset($disabled) && $disabled ? 'disabled' : '' }}
+        {{ isset($readonly) && $readonly ? 'readonly' : '' }}
+        {{ isset($multiple) && $multiple ? 'multiple' : '' }}
         >
         @foreach ($options as $option)
 
             @if (is_array($option))
                 <option
                     value="{{ $option['value'] }}"
-                    {{ isset($selected) && $option['value'] == $selected ? 'selected' : '' }}
+                    @if (isset($multiple) && $multiple)
+                        {{ isset($selected) && in_array($option['value'], $selected) ? 'selected' : '' }}
+                    @else
+                        {{ isset($selected) && $option['value'] == $selected ? 'selected' : '' }}
+                    @endif
                     >
                     {{ $option['text'] }}
                 </option>
             @else
                 <option
                     value="{{ $option->option_value }}"
-                    {{ isset($selected) && $option->is($selected) ? 'selected' : '' }}
+                    @if (isset($multiple) && $multiple)
+                        {{ isset($selected) && $selected->contains($option) ? 'selected' : '' }}
+                    @else
+                        {{ isset($selected) && $option->is($selected) ? 'selected' : '' }}
+                    @endif
                     >
                     {{ $option->option_text }}
                 </option>
@@ -30,9 +39,9 @@
         @endforeach
     </select>
 
-    @if($errors->first($name))
+    @if($errors->first(preg_replace("/[^a-zA-Z]/", "", $name)))
         <small class="form-text text-danger">
-            {{ $errors->first($name) }}
+            {{ $errors->first(preg_replace("/[^a-zA-Z]/", "", $name)) }}
         </small>
     @endif
 </div>

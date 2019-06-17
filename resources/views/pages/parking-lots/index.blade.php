@@ -18,8 +18,8 @@
             'display_name' => 'Address',
         ],
         [
-            'name' => 'user.fullname',
-            'display_name' => 'Operator',
+            'name' => 'action',
+            'display_name' => 'Action',
         ],
     ],
     'ajax' => route('parking-lots.index'),

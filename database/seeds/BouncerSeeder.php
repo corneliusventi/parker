@@ -26,7 +26,10 @@ class BouncerSeeder extends Seeder
         Bouncer::allow('administrator')->toManage(Parking::class);
         Bouncer::allow('administrator')->toManage(TopUp::class);
         Bouncer::allow('administrator')->to('change-profile');
-        Bouncer::allow('operator')->toManage(Slot::class);
+        Bouncer::allow('admin_operator')->toManage(Slot::class);
+        Bouncer::allow('admin_operator')->toManage(Parking::class);
+        Bouncer::allow('admin_operator')->toManage(Booking::class);
+        Bouncer::allow('admin_operator')->to('change-profile');
         Bouncer::allow('operator')->toManage(Parking::class);
         Bouncer::allow('operator')->toManage(Booking::class);
         Bouncer::allow('operator')->to('change-profile');

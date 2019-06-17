@@ -24,7 +24,7 @@ class UserController extends Controller
                 if (auth()->user()->isA('superadministrator')) {
                     return $query->whereIsNot('superadministrator');
                 } else {
-                    return $query->whereIs('operator');
+                    return $query->whereIs('operator', 'admin_operator');
                 }
             });
         } else {
@@ -40,7 +40,7 @@ class UserController extends Controller
         if (auth()->user()->isA('superadministrator')) {
             $roles = Role::whereNotIn('name', ['superadministrator'])->get();
         } else {
-            $roles = Role::whereIn('name', ['operator'])->get();
+            $roles = Role::whereIn('name', ['operator', 'admin_operator'])->get();
         }
 
         return view('pages.users.create', compact('roles'));
@@ -94,7 +94,7 @@ class UserController extends Controller
         if (auth()->user()->isA('superadministrator')) {
             $roles = Role::whereNotIn('name', ['superadministrator'])->get();
         } else {
-            $roles = Role::whereIn('name', ['operator'])->get();
+            $roles = Role::whereIn('name', ['operator', 'admin_operator'])->get();
         }
 
         return view('pages.users.edit', compact('user', 'roles'));

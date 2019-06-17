@@ -73,7 +73,7 @@ class User extends Authenticatable
 
     public function parkingLot()
     {
-        return $this->hasOne('App\ParkingLot');
+        return $this->belongsToMany('App\ParkingLot');
     }
 
     public static function laratablesCustomAction($user)

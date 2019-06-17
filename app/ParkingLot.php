@@ -22,9 +22,9 @@ class ParkingLot extends Model
         return $this->hasMany('App\Slot');
     }
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsToMany('App\User');
     }
 
     public function laratablesType()
@@ -40,5 +40,10 @@ class ParkingLot extends Model
     public function getOptionTextAttribute()
     {
         return $this->name;
+    }
+
+    public static function laratablesCustomAction($parkingLot)
+    {
+        return view('pages.parking-lots.action', compact('parkingLot'))->render();
     }
 }

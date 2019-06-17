@@ -20,11 +20,8 @@ class CreateParkingLotsTable extends Migration
             $table->enum('type', ['street', 'building']);
             $table->double('latitude');
             $table->double('longitude');
-            $table->unsignedInteger('user_id');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
