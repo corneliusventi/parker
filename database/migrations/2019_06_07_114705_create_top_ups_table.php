@@ -15,6 +15,8 @@ class CreateTopUpsTable extends Migration
     {
         Schema::create('top_ups', function (Blueprint $table) {
             $table->increments('id');
+            $table->date('date');
+            $table->time('time');
             $table->string('bank_account_number');
             $table->string('bank_account_name');
             $table->string('bank_name');

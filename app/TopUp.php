@@ -43,4 +43,15 @@ class TopUp extends Model
     {
         return 'Rp '.number_format($this->amount);
     }
+
+    public function getStatusAttribute()
+    {
+        if(is_null($this->approved)) {
+            return '-';
+        } else if($this->approved) {
+            return 'Approved';
+        } else {
+            return 'Disapproved';
+        }
+    }
 }

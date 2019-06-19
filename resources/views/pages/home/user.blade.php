@@ -70,6 +70,37 @@
                 </div>
             </div>
         </div>
+        <div class="col-12 mt-4">
+            <div class="container-fluid border border-primary rounded-lg px-0">
+                <div class="d-md-flex align-items-center pt-3 px-3 pb-1 bg-primary rounded-top">
+                    <div>
+                        <h5 class="text-white">Recents Top Ups</h5>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table" id="topups-table">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0">Date</th>
+                                <th class="border-top-0">Time</th>
+                                <th class="border-top-0">Amount</th>
+                                <th class="border-top-0">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($topUps as $topUp)
+                            <tr>
+                                <td>{{ $topUp->date }}</td>
+                                <td>{{ $topUp->time }}</td>
+                                <td> Rp {{ number_format($topUp->amount) }}</td>
+                                <td>{{ $topUp->status }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 

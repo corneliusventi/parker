@@ -28,8 +28,9 @@ class HomeController extends Controller
         if($user->isA('user')) {
             $bookings = $user->bookings;
             $parkings = $user->parkings;
+            $topUps = $user->topUps;
 
-            return view('pages.home.user', compact('bookings', 'parkings'));
+            return view('pages.home.user', compact('bookings', 'parkings', 'topUps'));
         } else {
             return view('pages.home');
         }
