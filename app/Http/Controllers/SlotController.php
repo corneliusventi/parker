@@ -15,9 +15,8 @@ class SlotController extends Controller
     {
         $this->middleware('can:manage,App\Slot');
 
-        $this->middleware(function ($request, $next)
-        {
-            if(!auth()->user()->parkingLot) {
+        $this->middleware(function ($request, $next) {
+            if (!auth()->user()->parkingLots) {
                 abort(403);
             }
 
@@ -31,11 +30,11 @@ class SlotController extends Controller
 
 
         if ($request->ajax()) {
-            return Laratables::recordsOf(Slot::class, function ($query)
-            {
-                return $query->whereHas('parkingLot', function ($query)
-                {
-                    $query->where('user_id', auth()->id());
+            return Laratables::recordsOf(Slot::class, function ($query) {
+                return $query->whereHas('parkingLot', function ($query) {
+                    $query->whereHas('users', function ($query) {
+                        $query->where('user_id', auth()->id());
+                    });
                 });
             });
         } else {
@@ -47,7 +46,7 @@ class SlotController extends Controller
     {
         $this->authorize('create', Slot::class);
 
-        $parkingLot = auth()->user()->parkingLot;
+        $parkingLot = auth()->user()->parkingLots->first();
         $code = Slot::code($parkingLot);
 
         return view('pages.slots.create', compact('code', 'parkingLot'));
@@ -64,7 +63,7 @@ class SlotController extends Controller
         try {
             DB::beginTransaction();
 
-            $parkingLot = auth()->user()->parkingLot;
+            $parkingLot = auth()->user()->parkingLots->first();
             $level = $request->level;
             $code = Slot::code($parkingLot, $level);
 
@@ -89,17 +88,17 @@ class SlotController extends Controller
         $this->authorize('print', $slot);
 
         $pdf = PDF::loadView('pages.slots.pdf', compact('slot'));
-        return $pdf->download($slot->code.'.pdf');
+        return $pdf->download($slot->code . '.pdf');
     }
 
     public function code(Request $request)
     {
-        if (auth()->user()->parkingLot) {
-            $parkingLot = auth()->user()->parkingLot;
+        if (auth()->user()->parkingLots) {
+            $parkingLot = auth()->user()->parkingLots->first();
+
             $code = Slot::code($parkingLot, $request->level);
 
             return response()->json(['status' => 'success', 'code' => $code], 200);
-
         } else {
             return response()->json(['status' => 'error', 'error' => 'Parking Lot Not Found'], 404);
         }

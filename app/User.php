@@ -71,7 +71,7 @@ class User extends Authenticatable
         return $this->fullname;
     }
 
-    public function parkingLot()
+    public function parkingLots()
     {
         return $this->belongsToMany('App\ParkingLot');
     }

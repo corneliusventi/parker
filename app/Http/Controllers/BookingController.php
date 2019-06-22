@@ -122,10 +122,9 @@ class BookingController extends Controller
 
         if ($request->ajax()) {
             return Laratables::recordsOf(Booking::class, function ($query) {
-                if(auth()->user()->parkingLot) {
-                    return $query->whereHas('parkingLot', function ($query)
-                    {
-                        $query->where('id', auth()->user()->parkingLot->id);
+                if (!empty(auth()->user()->parkingLots)) {
+                    return $query->whereHas('parkingLot', function ($query) {
+                        $query->whereIn('id', auth()->user()->parkingLots->pluck('id')->toArray());
                     });
                 } else {
                     return $query;

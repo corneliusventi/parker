@@ -39,7 +39,7 @@ class ParkingLotController extends Controller
         GMaps::initialize($config);
         $map = GMaps::create_map();
 
-        $operators = User::whereIs('operator', 'admin_operator')->doesntHave('parkingLot')->get();
+        $operators = User::whereIs('operator', 'admin_operator')->doesntHave('parkingLots')->get();
 
         return view('pages.parking-lots.create', compact('map', 'operators', 'admin_operators'));
     }
@@ -54,6 +54,7 @@ class ParkingLotController extends Controller
             'type'           => ['required', 'in:street,building'],
             'latitude'       => ['required', 'string', 'max:255'],
             'longitude'      => ['required', 'string', 'max:255'],
+
             'operators'      => ['required'],
             'operators.*'    => ['exists:users,id', new Role(['operator', 'admin_operator'])],
         ]);
@@ -124,7 +125,7 @@ class ParkingLotController extends Controller
 
         $map = GMaps::create_map();
 
-        $operators = User::whereIs('operator', 'admin_operator')->doesntHave('parkingLot')->get();
+        $operators = User::whereIs('operator', 'admin_operator')->doesntHave('parkingLots')->get();
         $operators = $operators->merge($parkingLot->users);
 
         return view('pages.parking-lots.edit', compact('parkingLot', 'map', 'operators'));

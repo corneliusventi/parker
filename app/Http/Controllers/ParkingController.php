@@ -81,9 +81,9 @@ class ParkingController extends Controller
 
         if ($request->ajax()) {
             return Laratables::recordsOf(Parking::class, function ($query) {
-                if (auth()->user()->parkingLot) {
+                if (!empty(auth()->user()->parkingLots)) {
                     return $query->whereHas('parkingLot', function ($query) {
-                        $query->where('id', auth()->user()->parkingLot->id);
+                        $query->whereIn('id', auth()->user()->parkingLots->pluck('id')->toArray());
                     });
                 } else {
                     return $query;

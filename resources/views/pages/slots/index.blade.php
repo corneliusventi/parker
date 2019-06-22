@@ -12,7 +12,7 @@
         [
             'name' => 'level',
             'display_name' => 'Level',
-            'if' => optional(auth()->user()->parkingLot)->type == 'building',
+            'if' => optional(auth()->user()->parkingLots->first())->type == 'building',
         ],
         [
             'name' => 'print',
