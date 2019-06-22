@@ -8,6 +8,7 @@ use FarhanWazir\GoogleMaps\Facades\GMapsFacade as Gmaps;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Freshbitsweb\Laratables\Laratables;
+use App\ParkingLot;
 
 class BookingController extends Controller
 {
@@ -65,8 +66,19 @@ class BookingController extends Controller
             $config['onclick'] = 'mapOnClick(event)';
             GMaps::initialize($config);
 
+            $parkingLots = ParkingLot::available()->get();
+
+            foreach ($parkingLots as $parkingLot) {
+                $marker = array();
+                $marker['position'] = $parkingLot->latitude . ', ' . $parkingLot->longitude;
+                $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=14ACBC&color=FFF&hoffset=-1';
+                $marker['onclick'] = "bookNow($parkingLot->id)";
+                Gmaps::add_marker($marker);
+            }
+
             $map = GMaps::create_map();
             $map['js'] = Str::replaceFirst('&v=3', '&v=3&libraries=geometry', $map['js']);
+            $map['js'] = Str::replaceFirst( '&sensor=falsesensor=false', '', $map['js']);
             return view('pages.booking', compact('map', 'cars'));
         }
     }

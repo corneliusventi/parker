@@ -14,7 +14,7 @@ class ParkingLotController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:manage,App\ParkingLot')->except('available');
+        $this->middleware('can:manage,App\ParkingLot')->except('detail');
     }
 
     public function index(Request $request)
@@ -186,33 +186,19 @@ class ParkingLotController extends Controller
 
         return redirect()->route('parking-lots.index')->withStatus('Parking Lot has been deleted');
     }
-    public function available(Request $request)
+
+    public function detail(Request $request)
     {
-        $latitude    = $request->latitude;
-        $longitude   = $request->longitude;
-        $innerRadius = $request->innerRadius;
-        $outerRadius = $request->outerRadius;
+        if ($request->query('parkingLotId')) {
+            $parkingLot = ParkingLot::withSlot()->find($request->query('parkingLotId'));
 
-        $parkingLots = ParkingLot::geofence($latitude, $longitude, $innerRadius, $outerRadius)
-            ->with(['slots' => function ($query) {
-                $query->whereHas('parkings', function ($query) {
-                    $query->where('status', true);
-                }, '<', 1);
-
-                $query->whereHas('bookings', function ($query) {
-                    $query->where('status', true);
-                }, '<', 1);
-            }])
-            ->whereHas('slots', function ($query) {
-                $query->whereHas('parkings', function ($query) {
-                    $query->where('status', true);
-                }, '<', 1);
-
-                $query->whereHas('bookings', function ($query) {
-                    $query->where('status', true);
-                }, '<', 1);
-            })->get();
-
-        return response()->json(['status' => 'success', 'parkingLots' => $parkingLots], 200);
+            if ($parkingLot) {
+                return response()->json(['data' => ['parkingLot' => $parkingLot], 'status' => 'success']);
+            } else {
+                return response()->json(['error' => 'Parking Lot Not Found', 'status' => 'error'], 404);
+            }
+        } else {
+            return response()->json(['error' => 'Parking Lot Id is Required', 'status' => 'error'], 400);
+        }
     }
 }

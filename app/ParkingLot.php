@@ -46,4 +46,30 @@ class ParkingLot extends Model
     {
         return view('pages.parking-lots.action', compact('parkingLot'))->render();
     }
+
+    public function scopeAvailable($query)
+    {
+        return $query->withSlot()
+        ->whereHas('slots', function ($query) {
+            $query->whereHas('parkings', function ($query) {
+                $query->where('status', true);
+            }, '<', 1);
+
+            $query->whereHas('bookings', function ($query) {
+                $query->where('status', true);
+            }, '<', 1);
+        });
+    }
+    public function scopeWithSlot($query)
+    {
+        return $query->with(['slots' => function ($query) {
+            $query->whereHas('parkings', function ($query) {
+                $query->where('status', true);
+            }, '<', 1);
+
+            $query->whereHas('bookings', function ($query) {
+                $query->where('status', true);
+            }, '<', 1);
+        }]);
+    }
 }

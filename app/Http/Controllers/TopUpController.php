@@ -38,6 +38,8 @@ class TopUpController extends Controller
     public function topUpping(Request $request)
     {
         TopUp::create([
+            'date'                => today(),
+            'time'                => now(),
             'bank_name'           => $request->input('bank_name'),
             'bank_account_number' => $request->input('bank_account_number'),
             'bank_account_name'   => $request->input('bank_account_name'),

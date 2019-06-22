@@ -91,89 +91,47 @@
         const parkingPrice = 1000;
 
         let destinationMarker;
-        let parkingLotMarkers = [];
         let radiusCircle;
         let radiusParking = 200; //meter
 
         $('#bookingPrice').text(bookingPrice);
         $('#parkingPrice').text(parkingPrice);
 
-        function showParkingLotInRadius(radius) {
-            let latitude = destinationMarker.position.lat();
-            let longitude = destinationMarker.position.lng();
-            let innerRadius = 0;
-            let outerRadius = radius / 1000;
-            $.ajax({
-                url: "{{ route('parking-lots.available') }}",
-                contentType: 'application/json',
-                method: 'GET',
-                data: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    innerRadius: innerRadius,
-                    outerRadius: outerRadius,
-                },
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function (response) {
-                    parkingLotMarkers.forEach(marker => {
-                        marker.setMap(null);
-                    });
+        $('#form-destination').submit(function (event) {
+            event.preventDefault();
+            if(geocoder) {
+                let formData = $( this ).serializeArray();
+                let destination = formData[0].value;
+                let radius = formData[1].value;
 
-                    parkingLotMarkers = [];
+                if(radius === "") {
+                    radius = radiusParking
+                } else {
+                    radius = parseInt(radius);
+                }
 
-                    let parkingLots = response.parkingLots;
-                    parkingLots.forEach(parkingLot => {
-                        let location = new google.maps.LatLng(parseFloat(parkingLot.latitude), parseFloat(parkingLot.longitude));
-                        let marker = new google.maps.Marker({
-                            map: map,
-                            parkingLotId: parkingLot.id,
-                            parkingLotName: parkingLot.name,
-                            parkingLotAddress: parkingLot.address,
-                            parkingLotSlots: parkingLot.slots,
-                            parkingLotType: parkingLot.type,
-                            icon: 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=14ACBC&color=FFF&hoffset=-1',
-                            position: location
-                        });
-                        google.maps.event.addListener(marker, 'click', function() {
-                            $('#bookingModal').modal();
-                            let name = marker.parkingLotName;
-                            let id = marker.parkingLotId;
-                            let address = marker.parkingLotAddress;
-                            let slots = marker.parkingLotSlots;
-                            let type = marker.parkingLotType;
-                            let slotSelectbox = $('#slot')
-                            slotSelectbox.empty();
-                            slots.forEach(slot => {
-                                let option = `<option value="${slot.id}" data-level="${slot.level}">${slot.code}</option>`;
-                                slotSelectbox.append(option);
-                            });
+                geocoder.geocode({ address: destination + ' Pontianak' }, function (results, status) {
+                    if (status === google.maps.GeocoderStatus.OK) {
+                        let location = results[0].geometry.location;
+                        placeDestination(location, radius);
+                        showParkingLotInRadius(radius);
 
-                            if(type == 'building') {
-                                $('.level').removeClass('d-none');
-                                let levels = _.chain(slots).map('level').uniq().value();
-                                let levelSelectbox = $('#level')
-                                levelSelectbox.empty();
-                                levels.forEach(level => {
-                                    let option = `<option value="${level}">${level}</option>`;
-                                    levelSelectbox.append(option);
-                                });
-                                $('#slot option').not(`[data-level="1"]`).hide();
-                            } else {
-                                $('.level').addClass('d-none');
-                            }
-                            let modal = $('#bookingModal');
-                            modal.find('.parkingLotId').val(id);
-                            modal.find('.parkingLotName').text(name);
-                            modal.find('.parkingLotAddress').text(address);
-                        });
+                    } else {
+                        alert('Geocode was not successful for the following reason: ' + status);
+                    }
+                })
 
-                        parkingLotMarkers.push(marker);
-                    });
+            }
+        })
 
-                },
-            });
+        function mapOnClick(event) {
+            placeDestination(event.latLng, radiusParking);
+        }
+
+        function placeDestination(location, radius) {
+            placeMarker(location, radius);
+            placeCircle(location, radius);
+            showParkingLotInRadius(radius);
         }
 
         function placeMarker(location, radius) {
@@ -194,7 +152,10 @@
             google.maps.event.addListener(destinationMarker, 'dragend', function (event) {
                 placeDestination(event.latLng, radius);
             });
-            if (radiusCircle) destinationMarker.bindTo("position", radiusCircle, "center");
+
+            if (radiusCircle) {
+                destinationMarker.bindTo("position", radiusCircle, "center");
+            }
         }
 
         function placeCircle(center, radius) {
@@ -209,74 +170,67 @@
                     fillColor: '#3490dc',
                     fillOpacity: 0.35,
                     map: map,
-                    // draggable: true,
                     center: center,
                     radius: radius
                 });
-                // google.maps.event.addListener(radiusCircle, 'dragend', function (event) {
-                //     placeDestination(event.latLng, radius);
-                // });
             }
-            if (destinationMarker) destinationMarker.bindTo("position", radiusCircle, "center");
+            if (destinationMarker) {
+                destinationMarker.bindTo("position", radiusCircle, "center");
+            }
         }
 
-        function placeDestination(location, radius) {
-            placeMarker(location, radius);
-            placeCircle(location, radius);
-            showParkingLotInRadius(radius);
-        }
-
-        function mapOnClick(event) {
-            placeDestination(event.latLng, radiusParking);
-        }
-
-        $('#form-destination').submit(function (event) {
-            event.preventDefault();
-            if(geocoder) {
-                let formData = $( this ).serializeArray();
-                let destination = formData[0].value;
-                let radius = formData[1].value;
-
-                if(radius === "") {
-                    radius = radiusParking
+        function showParkingLotInRadius(radius) {
+            markers_map.forEach(marker => {
+                if (google.maps.geometry.spherical.computeDistanceBetween(marker.position, destinationMarker.position) <= radius) {
+                    marker.setVisible(true);
                 } else {
-                    radius = parseInt(radius);
+                    marker.setVisible(false);
                 }
+            })
+        }
 
-                geocoder.geocode({ address: destination }, function (results, status) {
-                    if (status === google.maps.GeocoderStatus.OK) {
-                        let location = results[0].geometry.location;
-                        placeDestination(location, radius);
-                        showParkingLotInRadius(radius);
+        function bookNow(parkingLotId) {
+            $.ajax({
+                url: '{{ route('parking-lots.detail') }}',
+                data: {
+                    parkingLotId: parkingLotId
+                },
+                success: function (response) {
+                    let parkingLot = response.data.parkingLot
+                    let name = parkingLot.name;
+                    let id = parkingLot.id;
+                    let address = parkingLot.address;
+                    let slots = parkingLot.slots;
+                    let type = parkingLot.type;
 
+                    let slotSelectbox = $('#slot');
+                    slotSelectbox.empty();
+                    slots.forEach(slot => {
+                        let option = `<option value="${slot.id}" data-level="${slot.level}">${slot.code}</option>`;
+                        slotSelectbox.append(option);
+                    });
+
+                    if(type == 'building') {
+                        $('.level').removeClass('d-none');
+                        let levels = _.chain(slots).map('level').uniq().value();
+                        let levelSelectbox = $('#level')
+                        levelSelectbox.empty();
+                        levels.forEach(level => {
+                            let option = `<option value="${level}">${level}</option>`;
+                            levelSelectbox.append(option);
+                        });
+                        $('#slot option').not(`[data-level="1"]`).hide();
                     } else {
-                        alert('Geocode was not successful for the following reason: ' + status);
+                        $('.level').addClass('d-none');
                     }
-                })
-
-            }
-        })
-
-        // $('#bookingModal').on('show.bs.modal', function (event) {
-        //     var button = $(event.relatedTarget);
-        //     var name = button.data('name');
-        //     var parkingLotId = button.data('id');
-        //     var address = button.data('address');
-        //     var modal = $(this);
-        //     modal.find('.parkingLotId').val(parkingLotId);
-        //     modal.find('.parkingLotName').text(name);
-        //     modal.find('.parkingLotAddress').text(address);
-        // })
-        $('#bookLaterModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var name = button.data('name');
-            var parkingLotId = button.data('id');
-            var address = button.data('address');
-            var modal = $(this);
-            modal.find('.parkingLotId').val(parkingLotId);
-            modal.find('.parkingLotName').text(name);
-            modal.find('.parkingLotAddress').text(address);
-        })
+                    let modal = $('#bookingModal');
+                    modal.find('.parkingLotId').val(id);
+                    modal.find('.parkingLotName').text(name);
+                    modal.find('.parkingLotAddress').text(address);
+                    $('#bookingModal').modal();
+                },
+            });
+        }
 
         $('#hourBookNow').change(function () {
             let time = $(this).val();

@@ -15,6 +15,8 @@ class TopUp extends Model
      * @var array
      */
     protected $fillable = [
+        'date',
+        'time',
         'bank_account_number',
         'bank_account_name',
         'bank_name',

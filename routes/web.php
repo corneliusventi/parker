@@ -52,7 +52,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', 'UserController');
     Route::resource('cars', 'CarController');
 
-    Route::get('parking-lots/available', 'ParkingLotController@available')->name('parking-lots.available');
+    Route::get('parking-lots/detail', 'ParkingLotController@detail')->name('parking-lots.detail');
     Route::resource('parking-lots', 'ParkingLotController');
 
     Route::get('slots/code', 'SlotController@code')->name('slots.code');
