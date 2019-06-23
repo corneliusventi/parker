@@ -22,6 +22,16 @@ class ParkingLot extends Model
         return $this->hasMany('App\Slot');
     }
 
+    public function bookings()
+    {
+        return $this->hasMany('App\Booking');
+    }
+
+    public function parkings()
+    {
+        return $this->hasMany('App\Parking');
+    }
+
     public function users()
     {
         return $this->belongsToMany('App\User');
