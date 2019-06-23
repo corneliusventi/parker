@@ -38,5 +38,6 @@ class BouncerSeeder extends Seeder
         Bouncer::allow('user')->to('parking');
         Bouncer::allow('user')->to('topup');
         Bouncer::allow('user')->to('change-profile');
+        Bouncer::allow('user')->to('notifications');
     }
 }

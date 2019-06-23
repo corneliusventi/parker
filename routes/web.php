@@ -58,4 +58,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('slots/code', 'SlotController@code')->name('slots.code');
     Route::get('slots/{slot}/print', 'SlotController@print')->name('slots.print');
     Route::resource('slots', 'SlotController')->only(['index', 'create', 'store']);
+
+    Route::get('notifications', 'NotificationController@index')->name('notifications.index');
+    Route::get('notifications/read', 'NotificationController@readAll')->name('notifications.read-all');
+    Route::put('notifications/{notification}/read', 'NotificationController@read')->name('notifications.read');
+    Route::put('notifications/{notification}/unread', 'NotificationController@unread')->name('notifications.unread');
 });

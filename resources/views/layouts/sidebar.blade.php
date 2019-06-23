@@ -71,6 +71,11 @@
             <a href="{{ route('top-up.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="dollar-sign"></i> Top Up</a>
         </div>
     @endcan
+    @can('notifications')
+    <div>
+        <a href="{{ route('notifications.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="bell"></i> Notifications</a>
+    </div>
+    @endcan
     @can('change-profile')
         <div>
             <a href="{{ route('profile') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="user"></i> Profile</a>
@@ -106,7 +111,6 @@
 @push('js')
     <script>
         feather.replace({
-            class: 'mr-3',
             width: '22',
             height: '22',
         })

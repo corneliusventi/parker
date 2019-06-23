@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\TopUp;
 use Freshbitsweb\Laratables\Laratables;
+use App\Notifications\TopUpApproval;
 
 class TopUpController extends Controller
 {
@@ -101,6 +102,8 @@ class TopUpController extends Controller
         $user->wallet += $topUp->amount;
         $user->save();
 
+        $user->notify(new TopUpApproval($topUp));
+
         return redirect()->route('top-ups.index')->withStatus('Approval Top Up Successful');
     }
 
@@ -109,6 +112,9 @@ class TopUpController extends Controller
         $topUp->update([
             'approved' => false,
         ]);
+
+        $user = $topUp->user;
+        $user->notify(new TopUpApproval($topUp));
 
         return redirect()->route('top-ups.index')->withStatus('Disapproval Top Up Successful');
     }
