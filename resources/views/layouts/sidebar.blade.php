@@ -73,7 +73,14 @@
     @endcan
     @can('notifications')
     <div>
-        <a href="{{ route('notifications.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="bell"></i> Notifications</a>
+        <a href="{{ route('notifications.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block">
+            <i data-feather="bell"></i> Notifications
+            @if (!blank(auth()->user()->unreadNotifications))
+                <span class="badge badge-light">
+                    {{ auth()->user()->unreadNotifications->count() }}
+                </span>
+            @endif
+        </a>
     </div>
     @endcan
     @can('change-profile')
