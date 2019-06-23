@@ -6,18 +6,6 @@
 
 @section('form')
 
-    @input([
-        'name' => 'plate',
-        'required' => true,
-    ])
-        Plate
-    @endinput
-
-    @input([
-        'name' => 'brand',
-        'required' => true,
-    ])
-        Brand
-    @endinput
+    @include('pages.cars.form')
 
 @endsection

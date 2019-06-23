@@ -13,6 +13,10 @@
             'name' => 'brand',
             'display_name' => 'Brand',
         ],
+        [
+            'name' => 'action',
+            'display_name' => 'Action',
+        ],
     ],
     'ajax' => route('cars.index'),
     'create' => route('cars.create'),

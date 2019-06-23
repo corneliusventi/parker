@@ -14,14 +14,10 @@ class CarController extends Controller
     {
         $this->middleware('can:manage,App\Car');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request)
     {
-        $this->authorize('read', Car::class);
+        $this->authorize('browse', Car::class);
 
         if ($request->ajax()) {
             return Laratables::recordsOf(Car::class, function ($query)
@@ -33,27 +29,16 @@ class CarController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        $this->authorize('create', Car::class);
+        $this->authorize('add', Car::class);
 
         return view('pages.cars.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $this->authorize('store', Car::class);
+        $this->authorize('add', Car::class);
 
         $request->validate([
             'plate' => 'required|string',
@@ -80,4 +65,63 @@ class CarController extends Controller
         return redirect()->route('cars.index')->withStatus('Car has been saved');
     }
 
+    public function show(Car $car)
+    {
+        $this->authorize('read', $car);
+
+        return view('pages.cars.show', compact('car'));
+    }
+
+    public function edit(Car $car)
+    {
+        $this->authorize('edit', $car);
+
+        return view('pages.cars.edit', compact('car'));
+    }
+
+    public function update(Request $request, Car $car)
+    {
+        $this->authorize('edit', Car::class);
+
+        $request->validate([
+            'plate' => 'required|string',
+            'brand' => 'required|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $car->update([
+                'plate' => $request->plate,
+                'brand' => $request->brand,
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('cars.index')->withStatus('Car could not been updated');
+        }
+
+        return redirect()->route('cars.index')->withStatus('Car has been updated');
+    }
+
+    public function destroy(Request $request, Car $car)
+    {
+        $this-> authorize('delete', $car);
+
+        try {
+            DB::beginTransaction();
+
+            $car->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('cars.index')->withStatus('Car could not been deleted');
+        }
+
+        return redirect()->route('cars.index')->withStatus('Car has been deleted');
+    }
 }
