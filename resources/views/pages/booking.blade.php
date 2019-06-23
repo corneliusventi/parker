@@ -58,8 +58,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="hourBookNow" class="col-form-label">Hour</label>
-                            <select class="custom-select" id="hourBookNow" name="hour">
+                            <label for="time" class="col-form-label">Time</label>
+                            <input type="text" class="form-control" id="time" name="time">
+                        </div>
+                        <div class="form-group">
+                            <label for="hour" class="col-form-label">Hour</label>
+                            <select class="custom-select" id="hour" name="hour">
                                 <option value="1" selected>1 Hour</option>
                                 <option value="2">2 Hour</option>
                                 <option value="3">3 Hour</option>
@@ -68,13 +72,13 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="totalBookNow" class="col-form-label">Total</label>
-                            <input type="number" value="6000" class="form-control" id="totalBookNow" name="total" readonly>
+                            <label for="total" class="col-form-label">Total</label>
+                            <input type="number" value="6000" class="form-control" id="total" name="total" readonly>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Book Now</button>
+                        <button type="submit" class="btn btn-primary">Book</button>
                     </div>
                 </form>
             </div>
@@ -83,8 +87,14 @@
 
 @endsection
 
+@push('css')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+@endpush
+
 @push('js')
     {!! $map['js'] !!}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script>
         const defaultZoomIn = 17;
         const bookingPrice = 5000;
@@ -189,7 +199,7 @@
             })
         }
 
-        function bookNow(parkingLotId) {
+        function book(parkingLotId) {
             $.ajax({
                 url: '{{ route('parking-lots.detail') }}',
                 data: {
@@ -223,18 +233,32 @@
                     } else {
                         $('.level').addClass('d-none');
                     }
+
                     let modal = $('#bookingModal');
                     modal.find('.parkingLotId').val(id);
                     modal.find('.parkingLotName').text(name);
                     modal.find('.parkingLotAddress').text(address);
+
+                    let date = new Date();
+                    let defaultDate = date.getHours() + ':' + date.getMinutes();
+                    $("#time").flatpickr({
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        time_24hr: true,
+                        minDate: "07:00",
+                        maxDate: "21:00",
+                        defaultDate: defaultDate
+                    });
+
                     $('#bookingModal').modal();
                 },
             });
         }
 
-        $('#hourBookNow').change(function () {
+        $('#hour').change(function () {
             let time = $(this).val();
-            $('#totalBookNow').val( bookingPrice + (time * parkingPrice));
+            $('#total').val( bookingPrice + (time * parkingPrice));
         })
 
         $('#level').on('change', function (event) {

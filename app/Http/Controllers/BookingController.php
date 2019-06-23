@@ -72,7 +72,7 @@ class BookingController extends Controller
                 $marker = array();
                 $marker['position'] = $parkingLot->latitude . ', ' . $parkingLot->longitude;
                 $marker['icon'] = 'https://cdn.mapmarker.io/api/v1/pin?text=P&size=40&background=14ACBC&color=FFF&hoffset=-1';
-                $marker['onclick'] = "bookNow($parkingLot->id)";
+                $marker['onclick'] = "book($parkingLot->id)";
                 Gmaps::add_marker($marker);
             }
 
@@ -93,7 +93,7 @@ class BookingController extends Controller
         if (auth()->user()->wallet >= 10000 && auth()->user()->wallet >= $price) {
             Booking::create([
                 'hour' => (int)$request->input('hour'),
-                'time' => now(),
+                'time' => $request->input('time'),
                 'date' => today(),
                 'user_id' => auth()->id(),
                 'car_id' => $request->input('car'),
