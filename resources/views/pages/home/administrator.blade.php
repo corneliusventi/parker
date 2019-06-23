@@ -5,8 +5,8 @@
 @section('content')
     <div class="row">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-primary h-100 py-2">
-                <div class="card-body">
+            <div class="card border-primary h-100">
+                <div class="card-body p-2">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Bookings</div>
@@ -21,8 +21,8 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-primary h-100 py-2">
-                <div class="card-body">
+            <div class="card border-primary h-100">
+                <div class="card-body p-2">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Parkings</div>
@@ -37,8 +37,8 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-primary  h-100 py-2">
-                <div class="card-body">
+            <div class="card border-primary  h-100">
+                <div class="card-body p-2">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Users Registerd</div>
@@ -53,8 +53,8 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-primary h-100 py-2">
-                <div class="card-body">
+            <div class="card border-primary h-100">
+                <div class="card-body p-2">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Operators Registered</div>
@@ -70,7 +70,7 @@
 
     </div>
 
-    <div class="row mt-4">
+    <div class="row">
         <div class="col-12">
             <div class="container-fluid border border-primary rounded-lg px-0">
                 <div class="d-md-flex align-items-center pt-3 px-3 pb-1 bg-primary rounded-top">
