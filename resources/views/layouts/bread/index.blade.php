@@ -67,7 +67,7 @@
             columns: [
                 @foreach ($columns as $column)
                     @if((isset($column['if']) && $column['if']) || !isset($column['if']) )
-                        { name: '{{ $column['name'] }}' },
+                        { name: '{{ $column['name'] }}', orderable: false },
                     @endif
                 @endforeach
             ],
