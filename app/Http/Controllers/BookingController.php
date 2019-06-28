@@ -93,7 +93,7 @@ class BookingController extends Controller
         if (auth()->user()->wallet >= 10000 && auth()->user()->wallet >= $price) {
             Booking::create([
                 'hour' => (int)$request->input('hour'),
-                'time' => $request->input('time'),
+                'time' => now(),
                 'date' => today(),
                 'user_id' => auth()->id(),
                 'car_id' => $request->input('car'),

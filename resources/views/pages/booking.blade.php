@@ -58,10 +58,6 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="time" class="col-form-label">Time</label>
-                            <input type="text" class="form-control" id="time" name="time">
-                        </div>
-                        <div class="form-group">
                             <label for="hour" class="col-form-label">Hour</label>
                             <select class="custom-select" id="hour" name="hour">
                                 <option value="1" selected>1 Hour</option>
@@ -238,18 +234,6 @@
                     modal.find('.parkingLotId').val(id);
                     modal.find('.parkingLotName').text(name);
                     modal.find('.parkingLotAddress').text(address);
-
-                    let date = new Date();
-                    let defaultDate = date.getHours() + ':' + date.getMinutes();
-                    $("#time").flatpickr({
-                        enableTime: true,
-                        noCalendar: true,
-                        dateFormat: "H:i",
-                        time_24hr: true,
-                        minDate: "07:00",
-                        maxDate: "21:00",
-                        defaultDate: defaultDate
-                    });
 
                     $('#bookingModal').modal();
                 },
