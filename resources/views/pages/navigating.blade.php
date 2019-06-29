@@ -17,11 +17,15 @@
             <td>{{ $booking->slot->code }}</td>
         </tr>
         @if ($booking->parkingLot->type == 'building')
-            <tr>
-                <th>Level</th>
-                <td>{{ $booking->slot->level }}</td>
-            </tr>
+        <tr>
+            <th>Level</th>
+            <td>{{ $booking->slot->level }}</td>
+        </tr>
         @endif
+        <tr>
+            <th>Expired in</th>
+            <td>{{ \Carbon\Carbon::parse($booking->time)->addMinutes(30)->diffForHumans() }}</td>
+        </tr>
     </table>
     <div class="mb-4">
         {!! $map['html'] !!}

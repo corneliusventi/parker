@@ -30,6 +30,10 @@
             <th>Hour</th>
             <td>{{ $booking->hour }}</td>
         </tr>
+        <tr>
+            <th>Expired in</th>
+            <td>{{ \Carbon\Carbon::parse($booking->time)->addMinutes(30)->diffForHumans() }}</td>
+        </tr>
     </table>
     <div class="row">
         <div class="col-6">

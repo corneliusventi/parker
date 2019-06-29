@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Freshbitsweb\Laratables\Laratables;
 use App\ParkingLot;
+use App\Jobs\BookingExpired;
 
 class BookingController extends Controller
 {
@@ -91,7 +92,7 @@ class BookingController extends Controller
         $price = $bookingPrice + ($parkingPrice * $request->hour);
 
         if (auth()->user()->wallet >= 10000 && auth()->user()->wallet >= $price) {
-            Booking::create([
+            $booking = Booking::create([
                 'hour' => (int)$request->input('hour'),
                 'time' => now(),
                 'date' => today(),
@@ -100,6 +101,8 @@ class BookingController extends Controller
                 'slot_id' => $request->input('slot'),
                 'parking_lot_id' => $request->input('parking_lot'),
             ]);
+
+            BookingExpired::dispatch($booking)->delay(now()->addMinutes(30));
 
             auth()->user()->update([
                 'wallet' => auth()->user()->wallet - $price
