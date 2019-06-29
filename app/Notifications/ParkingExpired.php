@@ -2,26 +2,22 @@
 
 namespace App\Notifications;
 
-use App\Booking;
+use App\Parking;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class BookingExpired extends Notification
+class ParkingExpired extends Notification
 {
     use Queueable;
 
-    protected $booking;
+    protected $parking;
 
-    /**
-     * Create a new notification instance.
-     *
-     * @return void
-     */
-    public function __construct(Booking $booking)
+    public function __construct(Parking $parking)
     {
-        $this->booking = $booking;
+        $this->parking = $parking;
     }
 
     /**
@@ -43,9 +39,11 @@ class BookingExpired extends Notification
      */
     public function toMail($notifiable)
     {
+        $time_end = Carbon::parse($this->parking->time_end);
         return (new MailMessage)
-                    ->greeting('Status of Booking')
-                    ->line('Your booking at' . $this->booking->parkingLot->name . ' has been expired!')
+                    ->greeting('Status of Parking')
+                    ->line('Your parking at ' . $this->parking->parkingLot->name . ' expired in ' . $time_end->diffForHumans())
+                    ->line('Please leave the parking lot.')
                     ->action('Login', route('login'))
                     ->line('Thank you for using our application!');
     }
@@ -58,9 +56,11 @@ class BookingExpired extends Notification
      */
     public function toArray($notifiable)
     {
+        $time_end = Carbon::parse($this->parking->time_end);
         return [
-            'booking_id' => $this->booking->id,
-            'parking_lot' => $this->booking->parkingLot->name,
+            'parking_id' => $this->parking->id,
+            'parking_lot' => $this->parking->parkingLot->name,
+            'diff' => $time_end->diffForHumans(),
         ];
     }
 }

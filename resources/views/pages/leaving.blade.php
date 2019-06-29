@@ -23,7 +23,7 @@
             </tr>
         @endif
         <tr>
-            <th>Time Left</th>
+            <th>Expired in</th>
             <td>
                 {{ \Carbon\Carbon::parse($parking->time_end)->diffForHumans() }}
             </td>

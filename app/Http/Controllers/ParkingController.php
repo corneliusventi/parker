@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Parking;
-use Illuminate\Http\Request;
 use App\Booking;
 use App\ParkingLot;
+use Carbon\Carbon;
+use App\Jobs\ParkingExpired;
+use Illuminate\Http\Request;
 use Freshbitsweb\Laratables\Laratables;
 
 class ParkingController extends Controller
@@ -52,7 +54,7 @@ class ParkingController extends Controller
 
         $booking->status = false;
         $booking->save();
-        Parking::create([
+        $parking = Parking::create([
             'date' => today(),
             'time_start' => now(),
             'time_end' => now()->addHour($booking->hour),
@@ -61,6 +63,11 @@ class ParkingController extends Controller
             'slot_id' => $booking->slot_id,
             'parking_lot_id' => $booking->parking_lot_id,
         ]);
+        $time_end = Carbon::parse($parking->time_end);
+
+        ParkingExpired::dispatch($parking)->delay($time_end->subMinutes(5));
+        ParkingExpired::dispatch($parking)->delay($time_end);
+        ParkingExpired::dispatch($parking)->delay($time_end->addMinutes(5));
 
         return redirect()->route('parking.index')->withStatus('Parking Successful');
     }

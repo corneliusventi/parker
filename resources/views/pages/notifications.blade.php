@@ -33,6 +33,9 @@
                                 @if ($notification->type == 'App\Notifications\BookingExpired')
                                     {{ 'Booking at '.$notification->data['parking_lot'].' has been expired' }}
                                 @endif
+                                @if ($notification->type == 'App\Notifications\ParkingExpired')
+                                    {{ 'Parking at ' . $notification->data['parking_lot'] . ' expired in ' . $notification->data['diff']}}
+                                @endif
                             </td>
                             <td>
                                 @if ($notification->read())
