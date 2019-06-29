@@ -30,6 +30,9 @@
                                 @if ($notification->type == 'App\Notifications\TopUpApproval')
                                     {{ 'Top Up with amount '.$notification->data['amount'].' has been '.$notification->data['status'] }}
                                 @endif
+                                @if ($notification->type == 'App\Notifications\BookingExpired')
+                                    {{ 'Booking at '.$notification->data['parking_lot'].' has been expired' }}
+                                @endif
                             </td>
                             <td>
                                 @if ($notification->read())
@@ -42,7 +45,7 @@
                                     <form action="{{ route('notifications.read', $notification->id) }}" method="post">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit" class="btn btn-primary" title="Mark as Read"><i data-feather="book-open"></i></button>
+                                        <button tkype="submit" class="btn btn-primary" title="Mark as Read"><i data-feather="book-open"></i></button>
                                     </form>
                                 @endif
                             </td>

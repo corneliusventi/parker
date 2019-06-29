@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 Use App\Booking;
+Use App\Notifications\BookingExpired as BookingExpiredNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,6 +24,9 @@ class BookingExpired implements ShouldQueue
     public function handle()
     {
         if($this->booking->status) {
+            $user = $this->booking->user;
+            $user->notify(new BookingExpiredNotification($this->booking));
+
             $this->booking->delete();
         }
     }
