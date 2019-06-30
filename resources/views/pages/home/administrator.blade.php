@@ -41,7 +41,7 @@
                 <div class="card-body p-2">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Users Registerd</div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Users Registered</div>
                             <div class="h5 mb-0 font-weight-bold">{{ $users_count }}</div>
                         </div>
                         <div class="col-auto">
