@@ -28,7 +28,6 @@ class Slot extends Model
 
     public static function code(ParkingLot $parkingLot, $level = null)
     {
-        $slotId = $parkingLot->slots->count() + 1;
         $parkingLotId = $parkingLot->id;
 
         if ($parkingLot->type == 'building') {
@@ -38,6 +37,8 @@ class Slot extends Model
         } else {
             $level = 0;
         }
+
+        $slotId = $parkingLot->slots->where('level', $level)->count() + 1;
 
         return "PARKER-$parkingLotId-$level-$slotId";
     }
