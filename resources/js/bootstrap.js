@@ -11,6 +11,7 @@ try {
   window.Popper = require('popper.js').default
   window.$ = window.jQuery = require('jquery')
   window.feather = require('feather-icons')
+  require('jquery-mask-plugin')
   require('bootstrap')
   require('typeface-nunito')
 } catch (e) { }

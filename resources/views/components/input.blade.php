@@ -8,7 +8,8 @@
         name="{{ $name }}"
         id="{{ $id ?? $name }}"
         placeholder="{{ $placeholder ?? $slot }}"
-    value="{{ $value ?? old(preg_replace("/[^a-zA-Z]/", "", $name)) }}"
+        value="{{ $value ?? old(preg_replace("/[^a-zA-Z]/", "", $name)) }}"
+        {{ isset($mask) ? 'data-mask='.$mask : '' }}
         {{ isset($min) && $type == 'number' ? 'min='.$min : '' }}
         {{ isset($required) && $required ? 'required' : '' }}
         {{ isset($disabled) && $disabled ? 'disabled' : '' }}

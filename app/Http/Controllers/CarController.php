@@ -41,7 +41,7 @@ class CarController extends Controller
         $this->authorize('add', Car::class);
 
         $request->validate([
-            'plate' => 'required|string',
+            'plate' => 'required|alpha_num|unique:cars,plate',
             'brand' => 'required|string',
         ]);
 
@@ -49,7 +49,7 @@ class CarController extends Controller
             DB::beginTransaction();
 
             $car = new Car([
-                'plate' => $request->plate,
+                'plate' => strtoupper($request->plate),
                 'brand' => $request->brand,
             ]);
 
@@ -84,7 +84,7 @@ class CarController extends Controller
         $this->authorize('edit', Car::class);
 
         $request->validate([
-            'plate' => 'required|string',
+            'plate' => 'required|alpha_num|unique:cars,plate,'.$car->id,
             'brand' => 'required|string',
         ]);
 
@@ -92,7 +92,7 @@ class CarController extends Controller
             DB::beginTransaction();
 
             $car->update([
-                'plate' => $request->plate,
+                'plate' => strtoupper($request->plate),
                 'brand' => $request->brand,
             ]);
 
