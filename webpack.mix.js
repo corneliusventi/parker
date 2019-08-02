@@ -12,7 +12,14 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
-    .extract()
+    .extract([
+        'lodash',
+        'popper.js',
+        'jquery',
+        'feather-icons',
+        'bootstrap',
+        'typeface-nunito',
+    ])
     .scripts([
         'node_modules/datatables.net/js/jquery.dataTables.js',
         'node_modules/datatables.net-bs4/js/dataTables.bootstrap4.js'
