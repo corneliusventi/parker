@@ -58,13 +58,29 @@
     <div class="tab-pane fade {{ $mode == 'transfer' ? 'show active' : '' }}" id="transfer" role="tabpanel"
         aria-labelledby="transfer-tab">
         <div class="border border-primary rounded p-4 text-center">
-            <h2>PARKER</h2>
-            <h3>00229683606</h3>
-            @isset($topUp)
-            <h4>
-                Rp {{ number_format($topUp->amount) }}
-            </h4>
-            @endisset
+            <h2>Rekening Tujuan</h2>
+            <div class="row">
+                <div class="col">
+                    <h3>Bank</h3>
+                    <h5>Bank Central Asia (BCA)</h5>
+                </div>
+                <div class="col">
+                    <h3>Atas Nama</h3>
+                    <h5>PT. PARKER</h5>
+                </div>
+                <div class="col">
+                    <h3>Nomor Rekening</h3>
+                    <h5>00229683606</h5>
+                </div>
+                @isset($topUp)
+                <div class="col">
+                    <h3>Nominal</h3>
+                    <h5>
+                        Rp {{ number_format($topUp->amount) }}
+                    </h5>
+                </div>
+                @endisset
+            </div>
         </div>
         <form action="{{ route('top-up.upload') }}" method="POST" enctype="multipart/form-data">
             @csrf
