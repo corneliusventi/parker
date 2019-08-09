@@ -123,7 +123,7 @@ class CarController extends Controller
             Alert::error('Oops...', 'Car could not been deleted');
             return redirect()->route('cars.index');
         }
-        Alert::error('Success', 'Car has been deleted');
+        Alert::success('Success', 'Car has been deleted');
         return redirect()->route('cars.index');
     }
 }
