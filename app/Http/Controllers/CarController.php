@@ -6,6 +6,7 @@ use App\Car;
 use Illuminate\Http\Request;
 use Freshbitsweb\Laratables\Laratables;
 use Illuminate\Support\Facades\DB;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class CarController extends Controller
 {
@@ -58,11 +59,12 @@ class CarController extends Controller
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-
-            return redirect()->route('cars.index')->withStatus('Car could not been saved');
+            Alert::error('Oops...', 'Car could not been saved');
+            return redirect()->route('cars.index');
         }
 
-        return redirect()->route('cars.index')->withStatus('Car has been saved');
+        Alert::success('Success', 'Car has been saved');
+        return redirect()->route('cars.index');
     }
 
     public function show(Car $car)
@@ -99,11 +101,11 @@ class CarController extends Controller
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-
-            return redirect()->route('cars.index')->withStatus('Car could not been updated');
+            Alert::error('Oops...', 'Car could not been updated');
+            return redirect()->route('cars.index');
         }
-
-        return redirect()->route('cars.index')->withStatus('Car has been updated');
+        Alert::success('Success', 'Car has been updated');
+        return redirect()->route('cars.index');
     }
 
     public function destroy(Request $request, Car $car)
@@ -118,10 +120,10 @@ class CarController extends Controller
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-
-            return redirect()->route('cars.index')->withStatus('Car could not been deleted');
+            Alert::error('Oops...', 'Car could not been deleted');
+            return redirect()->route('cars.index');
         }
-
-        return redirect()->route('cars.index')->withStatus('Car has been deleted');
+        Alert::error('Success', 'Car has been deleted');
+        return redirect()->route('cars.index');
     }
 }

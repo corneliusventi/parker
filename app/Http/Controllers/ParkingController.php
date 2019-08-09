@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Jobs\ParkingExpired;
 use Illuminate\Http\Request;
 use Freshbitsweb\Laratables\Laratables;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ParkingController extends Controller
 {
@@ -26,7 +27,8 @@ class ParkingController extends Controller
             if ($parking) {
                 return $next($request);
             } else if (!$booking) {
-                return redirect()->route('booking.index')->withStatus('Booking First');
+                Alert::warning('Booking First', 'Booking first for be able to parking');
+                return redirect()->route('booking.index');
             }
 
             return $next($request);
@@ -69,7 +71,8 @@ class ParkingController extends Controller
         ParkingExpired::dispatch($parking)->delay($time_end);
         ParkingExpired::dispatch($parking)->delay($time_end->addMinutes(5));
 
-        return redirect()->route('parking.index')->withStatus('Parking Successful');
+        Alert::success('Start Parking', 'Start parking has been successfully');
+        return redirect()->route('parking.index');
     }
 
     public function leave(Request $request)
@@ -79,7 +82,8 @@ class ParkingController extends Controller
         $parking->status = false;
         $parking->save();
 
-        return redirect()->route('booking.index')->withStatus('Parking Successful');
+        Alert::success('Finish Parking', 'Finish parking has been successfully');
+        return redirect()->route('booking.index');
     }
 
     public function index(Request $request)

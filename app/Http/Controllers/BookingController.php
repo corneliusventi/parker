@@ -11,6 +11,7 @@ use Freshbitsweb\Laratables\Laratables;
 use App\ParkingLot;
 use App\Jobs\BookingExpired;
 use GoogleMaps;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class BookingController extends Controller
 {
@@ -25,11 +26,12 @@ class BookingController extends Controller
             $parkings = auth()->user()->parkings->where('status', true);
             $parking = $parkings->first();
             if ($parking) {
-                return redirect()->route('parking.index')->withStatus('Already Booking');
+                Alert::warning('Already Booking', 'Booking has been made');
+                return redirect()->route('parking.index');
             }
 
             return $next($request);
-        })->only(['bookings', 'book', 'cancel']);
+        })->only(['booking', 'book', 'cancel']);
     }
 
     public function booking()
@@ -120,9 +122,11 @@ class BookingController extends Controller
             auth()->user()->update([
                 'wallet' => auth()->user()->wallet - $price
             ]);
-            return redirect()->route('booking.index')->withStatus('Booking Successful');
+            Alert::success('Booking Successful', 'Booking process has been successfully');
+            return redirect()->route('booking.index');
         } else {
-            return redirect()->route('booking.index')->withStatus('Minimum Saldo Rp. 10.000 And Saldo doesn\'t enough');
+            Alert::warning('Not Enough Balace ', 'Minimum Balance Rp. 10.000 And Balance doesn\'t enough');
+            return redirect()->route('booking.index');
         }
     }
 
@@ -141,7 +145,8 @@ class BookingController extends Controller
         }
 
         $booking->delete();
-        return redirect()->route('booking.index')->withStatus('Delete Booking Successful');
+        Alert::success('Cancel Booking', 'Cancel Booking has been successfully');
+        return redirect()->route('booking.index');
     }
 
     public function index(Request $request)

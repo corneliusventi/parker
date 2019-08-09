@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Parking')
+@section('title', 'Start Parking')
 
 @section('content')
     <table class="table">
@@ -32,7 +32,7 @@
         </tr>
         <tr>
             <th>Expired in</th>
-            <td>{{ \Carbon\Carbon::parse($booking->time)->addMinutes(30)->diffForHumans() }}</td>
+            <td>{{ \Carbon\Carbon::parse($booking->expired_at)->diffForHumans() }}</td>
         </tr>
     </table>
     <div class="row">

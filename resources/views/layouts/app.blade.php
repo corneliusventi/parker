@@ -83,6 +83,7 @@
 @endpush
 
 @push('js')
+    @include('sweetalert::alert')
     <script>
         let menuIcon = feather.icons.menu.toSvg({ class: 'd-md-none' });
         let menu = $('#menu');
