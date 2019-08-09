@@ -43,6 +43,7 @@ class BookingController extends Controller
             $config['center'] = '-0.03109, 109.32199'; //Pontianak
             $config['zoom'] = 15;
             $config['geometry'] = true;
+            $config['disableDefaultUI'] = true;
             $config['trafficOverlay'] = true;
             $config['onclick'] = 'mapOnClick(event)';
             $config['directions'] = true;
@@ -65,6 +66,7 @@ class BookingController extends Controller
             $config['center'] = '-0.03109, 109.32199'; //Pontianak
             $config['zoom'] = 15;
             $config['geometry'] = true;
+            $config['disableDefaultUI'] = true;
             $config['onclick'] = 'mapOnClick(event)';
             GMaps::initialize($config);
 

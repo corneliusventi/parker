@@ -6,15 +6,15 @@
         <div id="sidebar" class="col-auto bg-primary p-4 d-md-block">
             @include('layouts.sidebar')
         </div>
-        <div class="content col p-4">
-            <div class="row">
-                <div class="col">
-                    <h1 class="h1 text-primary">
+        <div class="content col p-3">
+            <div class="row pb-2">
+                <div class="col-12 col-md">
+                    <h1 class="h1 text-primary align-middle">
                         <span id="menu"></span>
-                        @yield('title')
+                        <span>@yield('title')</span>
                     </h1>
                 </div>
-                <div class="col-auto">
+                <div class="col-12 col-md-auto">
                     @yield('buttons')
                     @yield('button')
                 </div>

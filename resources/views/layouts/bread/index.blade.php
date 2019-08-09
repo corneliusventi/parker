@@ -29,7 +29,7 @@
 @section('modal')
 
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteModalLabel">Delete Comfirmation</h5>
@@ -61,23 +61,41 @@
 @push('js')
     <script src="{{ mix('/js/datatable.js') }}"></script>
     <script>
-        $('#table').DataTable({
+        let table = $('#table').DataTable({
             serverSide: true,
+            responsive: true,
+            @if(isset($mode) && $mode == 'simple')
+                paging: false,
+                info: false,
+                searching: false,
+                // ordering: false,
+                lengthChange: false,
+            @endif
             ajax: "{{ $ajax ?? '#' }}",
             columns: [
                 @foreach ($columns as $column)
                     @if((isset($column['if']) && $column['if']) || !isset($column['if']) )
-                        { name: '{{ $column['name'] }}', orderable: false },
+                        @if($loop->first)
+                            { name: '{{ $column['name'] }}'},
+                        @else
+                            { name: '{{ $column['name'] }}', orderable: false },
+                        @endif
                     @endif
                 @endforeach
             ],
             drawCallback: function() {
                 feather.replace({
-                    width: '16',
-                    height: '16',
+                    width: '14',
+                    height: '14',
                 })
             }
         });
+        table.on('responsive-display', function (event) {
+            feather.replace({
+                width: '14',
+                height: '14',
+            })
+        })
 
          $('#deleteModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);

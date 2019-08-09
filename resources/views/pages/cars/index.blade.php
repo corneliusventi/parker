@@ -1,10 +1,7 @@
 @extends('layouts.bread.index', [
+    'mode' => 'simple',
     'title' => 'Cars',
     'columns' => [
-        [
-            'name' => 'id',
-            'display_name' => 'ID',
-        ],
         [
             'name' => 'plate',
             'display_name' => 'Plate',
