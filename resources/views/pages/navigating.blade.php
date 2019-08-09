@@ -24,7 +24,7 @@
         @endif
         <tr>
             <th>Expired in</th>
-            <td>{{ \Carbon\Carbon::parse($booking->time)->addMinutes(30)->diffForHumans() }}</td>
+            <td>{{ \Carbon\Carbon::parse($booking->expired_at)->diffForHumans() }}</td>
         </tr>
     </table>
     <div class="mb-4">

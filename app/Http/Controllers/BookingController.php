@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Freshbitsweb\Laratables\Laratables;
 use App\ParkingLot;
 use App\Jobs\BookingExpired;
+use GoogleMaps;
 
 class BookingController extends Controller
 {
@@ -86,6 +87,15 @@ class BookingController extends Controller
 
     public function book(Request $request)
     {
+        $parkingLot = ParkingLot::find($request->parking_lot);
+        $response = GoogleMaps::load('directions')
+            ->setParam([
+                'origin' => $request->userLatitude.','.$request->userLongitude,
+                'destination' => $parkingLot->latitude.','.$parkingLot->longitude
+            ])
+            ->get();
+        $duration = round(json_decode($response)->routes[0]->legs[0]->duration->value / 60);
+
         $bookingPrice = 5000;
         $parkingPrice = 1000;
 
@@ -100,9 +110,10 @@ class BookingController extends Controller
                 'car_id' => $request->input('car'),
                 'slot_id' => $request->input('slot'),
                 'parking_lot_id' => $request->input('parking_lot'),
+                'expired_at' => now()->addMinutes($duration + 30)
             ]);
 
-            BookingExpired::dispatch($booking)->delay(now()->addMinutes(30));
+            BookingExpired::dispatch($booking)->delay($booking->expired_at);
 
             auth()->user()->update([
                 'wallet' => auth()->user()->wallet - $price

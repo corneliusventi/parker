@@ -31,7 +31,9 @@
                 <form action="{{ route('booking.book') }}" method="POST">
                     <div class="modal-body">
                         @csrf
-                        <input type="hidden" class="parkingLotId" name="parking_lot" value="">
+                        <input type="hidden" class="parkingLotId" name="parking_lot">
+                        <input type="hidden" id="userLatitude" name="userLatitude">
+                        <input type="hidden" id="userLongitude" name="userLongitude">
                         <p>
                             <span class="parkingLotName"></span>
                             -
@@ -196,48 +198,59 @@
         }
 
         function book(parkingLotId) {
-            $.ajax({
-                url: '{{ route('parking-lots.detail') }}',
-                data: {
-                    parkingLotId: parkingLotId
-                },
-                success: function (response) {
-                    let parkingLot = response.data.parkingLot
-                    let name = parkingLot.name;
-                    let id = parkingLot.id;
-                    let address = parkingLot.address;
-                    let slots = parkingLot.slots;
-                    let type = parkingLot.type;
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    $.ajax({
+                        url: '{{ route('parking-lots.detail') }}',
+                        data: {
+                            parkingLotId: parkingLotId
+                        },
+                        success: function (response) {
+                            let parkingLot = response.data.parkingLot
+                            let name = parkingLot.name;
+                            let id = parkingLot.id;
+                            let address = parkingLot.address;
+                            let slots = parkingLot.slots;
+                            let type = parkingLot.type;
+                            let userLatitude = position.coords.latitude;
+                            let userLongitude = position.coords.longitude;
 
-                    let slotSelectbox = $('#slot');
-                    slotSelectbox.empty();
-                    slots.forEach(slot => {
-                        let option = `<option value="${slot.id}" data-level="${slot.level}">${slot.code}</option>`;
-                        slotSelectbox.append(option);
+                            let slotSelectbox = $('#slot');
+                            slotSelectbox.empty();
+                            slots.forEach(slot => {
+                                let option = `<option value="${slot.id}" data-level="${slot.level}">${slot.code}</option>`;
+                                slotSelectbox.append(option);
+                            });
+
+                            if(type == 'building') {
+                                $('.level').removeClass('d-none');
+                                let levels = _.chain(slots).map('level').uniq().value();
+                                let levelSelectbox = $('#level')
+                                levelSelectbox.empty();
+                                levels.forEach(level => {
+                                    let option = `<option value="${level}">${level}</option>`;
+                                    levelSelectbox.append(option);
+                                });
+                                $('#slot option').not(`[data-level="1"]`).hide();
+                            } else {
+                                $('.level').addClass('d-none');
+                            }
+
+                            let modal = $('#bookingModal');
+                            modal.find('.parkingLotId').val(id);
+                            modal.find('.parkingLotName').text(name);
+                            modal.find('.parkingLotAddress').text(address);
+                            modal.find('#userLatitude').val(userLatitude);
+                            modal.find('#userLongitude').val(userLongitude);
+
+                            $('#bookingModal').modal();
+
+                        },
                     });
-
-                    if(type == 'building') {
-                        $('.level').removeClass('d-none');
-                        let levels = _.chain(slots).map('level').uniq().value();
-                        let levelSelectbox = $('#level')
-                        levelSelectbox.empty();
-                        levels.forEach(level => {
-                            let option = `<option value="${level}">${level}</option>`;
-                            levelSelectbox.append(option);
-                        });
-                        $('#slot option').not(`[data-level="1"]`).hide();
-                    } else {
-                        $('.level').addClass('d-none');
-                    }
-
-                    let modal = $('#bookingModal');
-                    modal.find('.parkingLotId').val(id);
-                    modal.find('.parkingLotName').text(name);
-                    modal.find('.parkingLotAddress').text(address);
-
-                    $('#bookingModal').modal();
-                },
-            });
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
         }
 
         $('#hour').change(function () {
