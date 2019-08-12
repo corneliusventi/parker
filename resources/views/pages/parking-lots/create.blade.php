@@ -2,6 +2,7 @@
     'title' => 'Create Parking Lot',
     'back' => route('parking-lots.index'),
     'store' => route('parking-lots.store'),
+    'enctype' => 'multipart/form-data',
 ])
 
 @section('form')

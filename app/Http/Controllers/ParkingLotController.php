@@ -14,7 +14,7 @@ class ParkingLotController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:manage,App\ParkingLot')->except('detail');
+        $this->middleware('can:manage,App\ParkingLot')->except('detail', 'blueprint');
     }
 
     public function index(Request $request)
@@ -54,7 +54,7 @@ class ParkingLotController extends Controller
             'type'           => ['required', 'in:street,building'],
             'latitude'       => ['required', 'string', 'max:255'],
             'longitude'      => ['required', 'string', 'max:255'],
-
+            'blueprint'      => ['required', 'image'],
             'operators'      => ['required'],
             'operators.*'    => ['exists:users,id', new Role(['operator', 'admin_operator'])],
         ]);
@@ -68,6 +68,7 @@ class ParkingLotController extends Controller
                 'type'      => $request->type,
                 'latitude'  => $request->latitude,
                 'longitude' => $request->longitude,
+                'blueprint' => $request->file('blueprint')->store('blueprints'),
             ]);
 
             $parkingLot->users()->attach($request->operators);
@@ -142,6 +143,7 @@ class ParkingLotController extends Controller
             'latitude'       => ['required', 'string', 'max:255'],
             'longitude'      => ['required', 'string', 'max:255'],
             'operators'      => ['required'],
+            'blueprint'      => ['nullable', 'image'],
             'operators.*'    => ['exists:users,id', new Role(['operator', 'admin_operator'])],
         ]);
 
@@ -155,6 +157,12 @@ class ParkingLotController extends Controller
                 'latitude'  => $request->latitude,
                 'longitude' => $request->longitude,
             ]);
+
+            if($request->blueprint) {
+                $parkingLot->update([
+                    'blueprint' => $request->file('blueprint')->store('blueprints'),
+                ]);
+            }
 
             $parkingLot->users()->sync($request->operators);
 
@@ -200,5 +208,10 @@ class ParkingLotController extends Controller
         } else {
             return response()->json(['error' => 'Parking Lot Id is Required', 'status' => 'error'], 400);
         }
+    }
+
+    public function blueprint(Request $request, ParkingLot $parkingLot)
+    {
+        return response()->file(storage_path('/app//' . $parkingLot->blueprint));
     }
 }

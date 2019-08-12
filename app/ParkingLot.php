@@ -13,7 +13,7 @@ class ParkingLot extends Model
     use SoftCascadeTrait;
     use Geographical;
 
-    protected $fillable = ['name', 'address', 'type', 'latitude', 'longitude', 'user_id'];
+    protected $fillable = ['name', 'address', 'type', 'latitude', 'longitude', 'user_id', 'blueprint'];
     protected $softCascade = ['slots'];
     protected static $kilometers = true;
 

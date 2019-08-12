@@ -52,6 +52,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', 'UserController');
     Route::resource('cars', 'CarController');
 
+    Route::get('parking-lots/{parking_lot}/blueprint', 'ParkingLotController@blueprint')->name('parking-lots.blueprint');
     Route::get('parking-lots/detail', 'ParkingLotController@detail')->name('parking-lots.detail');
     Route::resource('parking-lots', 'ParkingLotController');
 

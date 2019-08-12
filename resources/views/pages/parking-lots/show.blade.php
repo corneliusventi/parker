@@ -21,6 +21,12 @@
             'name' => 'Operators',
             'value' => $parkingLot->users->pluck('fullname')->implode(', '),
         ],
+        [
+            'name' => 'Blueprint',
+            'value' => 'Preview',
+            'if' => isset($parkingLot->blueprint),
+            'link' => route('parking-lots.blueprint', $parkingLot->id),
+        ],
     ],
     'back' => route('parking-lots.index'),
 ])

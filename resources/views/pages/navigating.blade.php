@@ -26,6 +26,12 @@
             <th>Expired in</th>
             <td>{{ \Carbon\Carbon::parse($booking->expired_at)->diffForHumans() }}</td>
         </tr>
+        @if(isset($booking->parkingLot->blueprint))
+            <tr>
+                <th>Blueprint</th>
+                <td><a href="{{ route('parking-lots.blueprint', $booking->parkingLot->id) }}">Preview</a></td>
+            </tr>
+        @endif
     </table>
     <div class="mb-4">
         {!! $map['html'] !!}

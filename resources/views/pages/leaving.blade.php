@@ -28,6 +28,12 @@
                 {{ \Carbon\Carbon::parse($parking->time_end)->diffForHumans() }}
             </td>
         </tr>
+        @if(isset($parking->parkingLot->blueprint))
+        <tr>
+            <th>Blueprint</th>
+            <td><a href="{{ route('parking-lots.blueprint', $parking->parkingLot->id) }}">Preview</a></td>
+        </tr>
+        @endif
     </table>
 
     <a href="{{ route('parking.leave') }}" class="btn btn-primary btn-block" data-toggle="modal" data-target="#scanModal">Scan</a>

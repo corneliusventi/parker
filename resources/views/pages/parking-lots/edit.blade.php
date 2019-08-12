@@ -2,6 +2,7 @@
     'title' => 'Edit Parking Lot',
     'back' => route('parking-lots.index'),
     'update' => route('parking-lots.update', $parkingLot->id),
+    'enctype' => 'multipart/form-data',
 ])
 
 @section('form')

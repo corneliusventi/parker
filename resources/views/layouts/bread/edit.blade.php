@@ -12,7 +12,7 @@
 
 @section('content')
 
-    @form(['action' => $update, 'method' => 'PUT'])
+    @form(['action' => $update, 'method' => 'PUT', 'enctype' => $enctype ?? null])
 
         @yield('form')
 

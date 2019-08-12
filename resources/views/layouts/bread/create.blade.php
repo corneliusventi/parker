@@ -12,14 +12,14 @@
 
 @section('content')
 
-    @form(['action' => $store, 'method' => 'POST'])
+    @form(['action' => $store, 'method' => 'POST', 'enctype' => $enctype ?? null ])
 
         @yield('form')
 
         @button(['type' => 'submit', 'class' => 'btn-block'])
             Create
         @endbutton
-        
+
     @endform
 
 @endsection
