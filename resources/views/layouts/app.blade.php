@@ -59,12 +59,12 @@
 
         }
         #sidebar {
-            overflow-y: auto;
+            /* overflow-y: auto; */
             width: 200px;
-            height: 100%;
+            /* height: 100%; */
             left: -200px;
             z-index: 3;
-            position: fixed;
+            position: absolute;
             transition: all 1s;
         }
         #sidebar.active {
@@ -79,7 +79,11 @@
             z-index: 2;
             opacity: 0.5;
         }
+        .driver-fix-stacking {
+            position: relative !important;
+        }
     </style>
+    
 @endpush
 
 @push('js')
@@ -87,15 +91,18 @@
     <script>
         let menuIcon = feather.icons.menu.toSvg({ class: 'd-md-none' });
         let menu = $('#menu');
+        let content = $('.content');
         let sidebar = $('#sidebar');
         let backdrop = $('#backdrop');
         menu.append(menuIcon);
         menu.click(() => {
             sidebar.toggleClass('active');
+            content.hide();
             backdrop.fadeIn();
         });
         backdrop.click(() => {
             sidebar.toggleClass('active');
+            content.show();
             backdrop.fadeOut();
         });
     </script>

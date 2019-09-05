@@ -5,7 +5,7 @@
 @section('button')
 
     @isset($create)
-        @link(['url' => $create])
+        @link(['url' => $create, 'id' => 'create-btn'])
             Create
         @endlink
     @endisset
@@ -13,17 +13,19 @@
 @endsection
 
 @section('content')
-    <table id="table" class="table" style="width:100%">
-        <thead>
-            <tr>
-                @foreach ($columns as $column)
-                    @if((isset($column['if']) && $column['if']) || !isset($column['if']) )
-                        <th> {{ $column['display_name'] }} </th>
-                    @endif
-                @endforeach
-            </tr>
-        </thead>
-    </table>
+    <div id="table-area">
+        <table id="table" class="table" style="width:100%">
+            <thead>
+                <tr>
+                    @foreach ($columns as $column)
+                        @if((isset($column['if']) && $column['if']) || !isset($column['if']) )
+                            <th> {{ $column['display_name'] }} </th>
+                        @endif
+                    @endforeach
+                </tr>
+            </thead>
+        </table>
+    </div>
 @endsection
 
 @section('modal')

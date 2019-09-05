@@ -30,6 +30,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+    
+    protected $casts = [
+        'intros' => 'array',
+    ];
 
     public function cars()
     {

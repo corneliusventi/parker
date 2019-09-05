@@ -18,61 +18,61 @@
             <h6 class="mb-4">{{ auth()->user()->getRoles()->first() }}</h6>
         @endif
     </div>
-    <div>
+    <div id="home-menu">
         <a href="{{ route('home') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="home"></i> Home</a>
     </div>
     @can('manage', \App\User::class)
-        <div>
+        <div id="users-menu">
             <a href="{{ route('users.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="users"></i> Users</a>
         </div>
     @endcan
     @can('manage', \App\ParkingLot::class)
-        <div>
+        <div id="parkingLots-menu">
             <a href="{{ route('parking-lots.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="flag"></i> Parking Lots</a>
         </div>
     @endcan
     @can('manage', \App\Slot::class)
-        <div>
+        <div id="slots-menu">
             <a href="{{ route('slots.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="grid"></i> Slots</a>
         </div>
     @endcan
     @can('manage', \App\Car::class)
-        <div>
+        <div id="cars-menu">
             <a href="{{ route('cars.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="truck"></i> Cars</a>
         </div>
     @endcan
     @can('manage', \App\TopUp::class)
-        <div>
+        <div id="topups-menu"> 
             <a href="{{ route('top-ups.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="dollar-sign"></i> Top Ups</a>
         </div>
     @endcan
     @can('manage', \App\Booking::class)
-        <div>
+        <div id="bookings-menu">
             <a href="{{ route('bookings.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="book-open"></i> Bookings</a>
         </div>
     @endcan
     @can('manage', \App\Parking::class)
-        <div>
+        <div id="parkings-menu">
             <a href="{{ route('parkings.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="map-pin"></i> Parkings</a>
         </div>
     @endcan
     @can('booking')
-        <div>
+        <div id="booking-menu">
             <a href="{{ route('booking.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="book-open"></i> Booking</a>
         </div>
     @endcan
     @can('parking')
-        <div>
+        <div id="parking-menu">
             <a href="{{ route('parking.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="map-pin"></i> Parking</a>
         </div>
     @endcan
     @can('topup')
-        <div>
+        <div id="topup-menu">
             <a href="{{ route('top-up.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="dollar-sign"></i> Top Up</a>
         </div>
     @endcan
     @can('notifications')
-    <div>
+    <div id="notification-menu">
         <a href="{{ route('notifications.index') }}" class="btn btn-primary text-left p-auto btn-big btn-block">
             <i data-feather="bell"></i> Notifications
             @if (!blank(auth()->user()->unreadNotifications))
@@ -84,11 +84,11 @@
     </div>
     @endcan
     @can('change-profile')
-        <div>
+        <div id="profile-menu">
             <a href="{{ route('profile') }}" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="user"></i> Profile</a>
         </div>
     @endcan
-    <div>
+    <div id="logout-menu">
         <form action="{{ route('logout') }}" method="post">
             @csrf
             <button type="submit" class="btn btn-primary text-left p-auto btn-big btn-block"><i data-feather="log-out"></i> Logout</button>
@@ -127,6 +127,7 @@
         close.click(() => {
             sidebar.toggleClass('active');
             backdrop.fadeOut();
+            content.show();
         });
     </script>
 @endpush

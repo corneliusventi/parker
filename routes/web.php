@@ -64,4 +64,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('notifications/read', 'NotificationController@readAll')->name('notifications.read-all');
     Route::put('notifications/{notification}/read', 'NotificationController@read')->name('notifications.read');
     Route::put('notifications/{notification}/unread', 'NotificationController@unread')->name('notifications.unread');
+    
+    Route::post('/intros', 'IntroController@store')->name('intros.store');
 });

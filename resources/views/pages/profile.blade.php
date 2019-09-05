@@ -5,7 +5,7 @@
 @section('content')
     <div class="row">
         <div class="col-12 col-xl-4">
-            <form action="{{ route('profile.update.photo') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('profile.update.photo') }}" method="POST" enctype="multipart/form-data" id="avatar-form">
                 @csrf
                 @method('PUT')
                 <div class="d-flex justify-content-center pb-4 pt-4 mb-4 rounded bg-primary">
@@ -24,7 +24,7 @@
             </form>
         </div>
         <div class="col-12 col-xl-8">
-            <form action="{{ route('profile.update') }}" method="POST">
+            <form action="{{ route('profile.update') }}" method="POST" id="profile-form">
                 @csrf
                 @method('PUT')
                 <div class="form-group">
@@ -63,3 +63,52 @@
         });
     </script>
 @endpush
+
+@if(!collect(auth()->user()->intros)->contains('profile-intro'))
+    @push('css')
+        <link rel="stylesheet" href="https://unpkg.com/driver.js/dist/driver.min.css">
+    @endpush
+
+    @push('js')
+        <script src="https://unpkg.com/driver.js/dist/driver.min.js"></script>
+            <script>
+                const profileDriver = new Driver({
+                    onReset: (Element) => {
+                        $.ajax({
+                            data: {'intro': 'profile-intro'},
+                            method: 'POST',
+                            url: '{{ route('intros.store') }}',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        })
+                    }, 
+                });
+
+                // Define the steps for introduction
+                profileDriver.defineSteps([
+                    {
+                        element: '#avatar-form',
+                        popover: {
+                            title: 'Avatar',
+                            description: 'Change avatar',
+                            position: 'auto'
+                        }
+                    },
+                    {
+                        element: '#profile-form',
+                        popover: {
+                            title: 'Profile',
+                            description: 'Change profile & password',
+                            position: 'auto'
+                        }
+                    },
+                ]);
+
+                setTimeout(() => {
+                    profileDriver.start();
+                }, 1000);
+
+            </script>
+    @endpush
+@endif

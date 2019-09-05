@@ -267,3 +267,52 @@
         })
     </script>
 @endpush
+
+@if(!collect(auth()->user()->intros)->contains('booking-intro'))
+    @push('css')
+        <link rel="stylesheet" href="https://unpkg.com/driver.js/dist/driver.min.css">
+    @endpush
+
+    @push('js')
+        <script src="https://unpkg.com/driver.js/dist/driver.min.js"></script>
+            <script>
+                const bookingDriver = new Driver({
+                    onReset: (Element) => {
+                        $.ajax({
+                            data: {'intro': 'booking-intro'},
+                            method: 'POST',
+                            url: '{{ route('intros.store') }}',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        })
+                    }, 
+                });
+
+                // Define the steps for introduction
+                bookingDriver.defineSteps([
+                    {
+                        element: '#form-destination',
+                        popover: {
+                            title: 'Search Bar',
+                            description: 'Destination & radius filter',
+                            position: 'bottom'
+                        }
+                    },
+                    {
+                        element: '#map_canvas',
+                        popover: {
+                            title: 'Digital Map',
+                            description: 'Map of parking lots',
+                            position: 'auto'
+                        }
+                    },
+                ]);
+
+                setTimeout(() => {
+                    bookingDriver.start();
+                }, 1000);
+
+            </script>
+    @endpush
+@endif

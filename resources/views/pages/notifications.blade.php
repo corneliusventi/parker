@@ -6,13 +6,13 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="container-fluid border border-primary rounded-lg px-0">
+        <div id="notification-table" class="container-fluid border border-primary rounded-lg px-0">
             <div class="d-md-flex align-items-center justify-content-between py-3 px-3 pb-1 bg-primary rounded-top">
                 <div>
                     <h5 class="text-white">Recents Notifications</h5>
                 </div>
                 <div>
-                    <a href="{{ route('notifications.read-all') }}" class="btn btn-primary p-1" title="Mark All as Read"><i data-feather="book-open"></i></a>
+                    <a href="{{ route('notifications.read-all') }}" id="read-btn" class="btn btn-primary p-1" title="Mark All as Read"><i data-feather="book-open"></i></a>
                 </div>
             </div>
             <div class="table-responsive">
@@ -77,3 +77,52 @@
         $('#notifications-table').DataTable(options);
 </script>
 @endpush
+
+@if(!collect(auth()->user()->intros)->contains('notification-intro'))
+    @push('css')
+        <link rel="stylesheet" href="https://unpkg.com/driver.js/dist/driver.min.css">
+    @endpush
+
+    @push('js')
+        <script src="https://unpkg.com/driver.js/dist/driver.min.js"></script>
+            <script>
+                const notificationDriver = new Driver({
+                    onReset: (Element) => {
+                        $.ajax({
+                            data: {'intro': 'notification-intro'},
+                            method: 'POST',
+                            url: '{{ route('intros.store') }}',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        })
+                    }, 
+                });
+
+                // Define the steps for introduction
+                notificationDriver.defineSteps([
+                    {
+                        element: '#notification-table',
+                        popover: {
+                            title: 'Notifcations',
+                            description: 'Your new notifications',
+                            position: 'auto'
+                        }
+                    },
+                    {
+                        element: '#read-btn',
+                        popover: {
+                            title: 'Read All',
+                            description: 'Mark as read all',
+                            position: 'auto'
+                        }
+                    },
+                ]);
+
+                setTimeout(() => {
+                    notificationDriver.start();
+                }, 1000);
+
+            </script>
+    @endpush
+@endif
